@@ -4,15 +4,45 @@
     <meta charset="utf-8">
     <title>Sivart</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="https://travis-ci-org.global.ssl.fastly.net/assets/travis-dd949bf9a74f9732154d48c33bd61764.css">
     <style>
-      div.build { 
-        margin-bottom: 20px; 
+      .icon.push {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiP…EuMTM2QzEwLjEwMSw2LjY4Nyw5LjM0NCw3LjE2NSw4LjQ3NSw3LjE2NXoiLz4NCjwvc3ZnPg0K);
+      }
+      .icon.pull_request {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiP…UzUzE0LjYzNCwxOS4yNywxMy44ODYsMTkuMjd6Ii8+DQoJPC9nPg0KPC9nPg0KPC9zdmc+DQo=);
+      }
+      .icon-status.error {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiP…EyLjk3Mkg5LjE5NEw4LjUxMyw0LjczSDExLjlMMTEuMjE5LDEyLjk3MnoiCgkvPgo8L3N2Zz4K);
+      }
+      .icon-status.fail {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiP…IuNzcxbDIuMTg3LDIuMTg2bC0yLjc3MSwyLjc3MUwxNS4xNzEsMTMuMDk3eiIvPgo8L3N2Zz4K);
+      }
+      .icon-status.pass {
+        background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiP…44NzVDMTQuODA4LDYuMjAyLDE0Ljg3Myw2LjQ5LDE0LjczNiw2LjcwM3oiLz4KPC9zdmc+Cg==);
+      }
+      .runs {
+        margin-bottom: 20px;
+      }
+      div.build, #mainData { 
         background-color: #eee;
-        box-shadow:         1px 1px 1px 1px #ccc;
+        box-shadow: 1px 1px 1px 1px #ccc;
         font-family: "Source Sans Pro",Helvetica,sans-serif;
         font-weight: 400;
         font-style: normal;
         width: 80%;
+      }
+      .status_fail {
+        background-color: red;
+      }
+      .status_error {
+        background-color: orange;
+      }
+      .command_time {
+        float: right;
+      }
+      .command {
+        cursor: pointer;
       }
     </style>
 </head>

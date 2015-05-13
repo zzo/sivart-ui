@@ -7,7 +7,7 @@ var express = require('express'),
   ReadData = require('sivart-data/ReadBuildData'),
   port = process.argv[2] || 8000,
   gcloud = require('gcloud'),
-  helpers = require('./views/helpers/helpers') // be fancier about this
+  helpers = require('./views/helpers/newHelpers') // be fancier about this
 ;
 
 app.engine('handlebars', exphbs({
@@ -42,8 +42,12 @@ app.get('/:username/:repo', function (req, res) {
   var repoName = path.join(username, repo);
   var readData = new ReadData(repoName);
   readData.getSomePushBuilds(function(err, data) {
-    data = data.reverse();
-    res.render('home', { type: 'Push', builds: data, repoName: repoName });
+    if (err) {
+      res.error();
+    } else {
+      data = data.reverse();
+      res.render('buildList', { kind: 'push', kind: 'push', type: 'Push', builds: data, repoName: repoName });
+    }
   });
 });
 
@@ -54,26 +58,44 @@ app.get('/:username/:repo/pull_requests', function (req, res) {
   var readData = new ReadData(repoName);
   readData.getSomePRBuilds(function(err, data) {
     data = data.reverse();
-    res.render('home', { type: 'Pull Requests', builds: data, repoName: repoName });
+    res.render('home', { kind: 'pull_request', type: 'Pull Requests', builds: data, repoName: repoName });
   });
 });
 
-app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, res) {
+// view a single build
+app.get('/:username/:repo/jobs/:kind/:branch/:buildId/:buildNumber', function (req, res) {
   var username = req.params.username;
   var repo = req.params.repo;
+  var kind = req.params.kind;
   var repoName = path.join(username, repo);
   var branch = req.params.branch;
   var buildId = req.params.buildId;
   var buildNumber = req.params.buildNumber;
   var readData = new ReadData(repoName);
-  readData.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
-    if (!err) {
-    res.render('single', { branch: branch, buildId: buildId, buildNumber: buildNumber, mainLog: data.toString(), repoName: repoName });
+  readData.getABuild(kind, buildId, function(err, buildInfo) {
+    if (err) {
+      console.log(err);
+      // send 404?
+      res.render('single', { mainLog: 'build not found', repoName: repoName });
     } else {
-      if (err.code === 404) {
-        // send 404?
-        res.render('single', { branch: branch, buildId: buildId, buildNumber: buildNumber, mainLog: 'build not found', repoName: repoName });
-      }
+      readData.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
+        if (!err) {
+          res.render('single', {
+            buildInfo: buildInfo,
+            branch: branch,
+            buildId: buildId,
+            buildNumber: buildNumber,
+            mainLog: data.toString(),
+            repoName: repoName,
+            type: kind
+          });
+        } else {
+          if (err.code === 404) {
+            // send 404?
+            res.render('single', { mainLog: 'build not found', repoName: repoName });
+          }
+        }
+      });
     }
   });
 });
@@ -87,6 +109,7 @@ app.get('/getFile/:username/:repo/:branch/:buildId/:buildNumber/:filename', func
   var buildNumber = req.params.buildNumber;
   var filename = req.params.filename;
   var readData = new ReadData(repoName);
+
   readData.getLogFile(branch, buildId, buildNumber, filename, function(err, contents) {
     res.end(contents);
   });

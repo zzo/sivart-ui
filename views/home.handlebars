@@ -1,24 +1,12 @@
 {{#each builds}}
-  <div class="build">
-    <div id="topinfo">
-      <b>{{getbranch}}</b>&nbsp;{{topinfo}}
-    </div>
-    <div id="info">
-      <a window="_blank" href="{{info}}">View on Github</a>
-    </div>
-    <p />
-    <div id="info">
-      {{author}}
-    </div>
-
-    <p />
-
+  {{>topdata}}
+<!--
     <div class="runs">
       {{#each runs}}
         <li class="run">
-          <a href="jobs/{{branch}}/{{buildId}}/{{buildNumber}}">{{runstatus}} {{buildId}}.{{buildNumber}} {{nodeVersion}} {{matrix}} {{totaltime}}</a>
+          <a href="/{{../../repoName}}/jobs/{{../../kind}}/{{branch}}/{{buildId}}/{{buildNumber}}">{{runstatus}} {{buildId}}.{{buildNumber}} {{nodeVersion}} {{matrix}} {{totaltime}}</a>
         </li>
       {{/each}}
     </div>
-  </div>
+    -->
 {{/each}}

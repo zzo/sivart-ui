@@ -3,7 +3,7 @@
 var path = require('path');
 
 exports.getbranch = function() {
-  var github = this.rawBuildRequest;
+  var github = this.rawBuildRequest || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return "PR #" + github.number;
   } else {
@@ -13,7 +13,7 @@ exports.getbranch = function() {
 
 // this is the current build
 exports.topinfo = function() {
-  var github = this.rawBuildRequest;
+  var github = this.rawBuildRequest || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return github.pull_request.title;
   } else {
@@ -22,7 +22,7 @@ exports.topinfo = function() {
 };
 
 exports.info = function() {
-  var github = this.rawBuildRequest;
+  var github = this.rawBuildRequest || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return github.pull_request.html_url;
   } else {
@@ -31,17 +31,21 @@ exports.info = function() {
 };
 
 exports.author = function() {
-  var github = this.rawBuildRequest;
+  var github = this.rawBuildRequest || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return github.pull_request.user.login;
   } else {
     /*
       author:
          { username: 'btford',
-              email: 'btford@umich.edu',
-                   name: 'Brian Ford' },
+           email: 'btford@umich.edu',
+             name: 'Brian Ford' },
     */
-    return github.head_commit.author.email;
+    if (github && github.head_commit && github.head_commit.author) {
+      return github.head_commit.author.name;
+    } else {
+      return '';
+    }
   }
 };
 
