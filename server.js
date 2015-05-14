@@ -49,10 +49,6 @@ app.get('/:username/:repo', function (req, res) {
       res.error();
     } else {
       data = data.reverse();
-      data = data.map(function(d) {
-        d.kind = 'push';
-        return d;
-      });
       res.render('buildList', { type: 'Push', builds: data, repoName: repoName });
     }
   });
@@ -65,15 +61,27 @@ app.get('/:username/:repo/pull_requests', function (req, res) {
   var datastore = new Datastore(repoName);
   datastore.getSomePRBuilds(function(err, data) {
     data = data.reverse();
-    data = data.map(function(d) {
-      d.kind = 'pull_request';
-      return d;
-    });
     res.render('buildList', { type: 'Pull Requests', builds: data, repoName: repoName });
   });
 });
 
-// view a single build
+// view a single build details
+app.get('/:username/:repo/jobs/:buildId', function (req, res) {
+  var username = req.params.username;
+  var repo = req.params.repo;
+  var repoName = path.join(username, repo);
+  var buildId = req.params.buildId;
+  var datastore = new Datastore(repoName);
+  datastore.getABuild(buildId, function(err, build) {
+    if (err) {
+      // 404?
+    } else {
+      res.render('buildSingle', { build: build, repoName: repoName });
+    }
+  });
+});
+
+// view a single build run
 app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, res) {
   var username = req.params.username;
   var repo = req.params.repo;

@@ -10,6 +10,34 @@ exports.detailViewURL = function() {
   return state;
 };
 
+exports.compareURL = function() {
+  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  if (github.number) {
+    return github.pull_request.html_url;
+  } else {
+    return github.compare;
+  }
+};
+
+exports.compareText = function() {
+  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  if (github.number) {
+    return github.pull_request.title;
+  } else {
+    return 'Compare ' + github.before.substring(0, 7) + '...' + github.after.substring(0, 7);
+  }
+};
+
+exports.getBody = function() {
+  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  if (github.number) {
+    return github.pull_request.body;
+  } else {
+// TODO
+    return github.head_commit.body;
+  }
+};
+
 exports.overallBuildStatus = function() {
   var state = this.buildData.state || 'passed';
   if (state === 'building' || state === 'running') {
@@ -60,6 +88,11 @@ exports.buildId = function() {
   }
 };
 
+exports.runningOrRan = function() {
+  var status = exports.overallBuildStatus.call(this);
+  return status === 'running' ? 'running' : 'ran';
+};
+
 exports.githubCommitURL = function() {
   var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
@@ -81,6 +114,12 @@ exports.githubCommitNumber = function() {
 
 exports.totalSeconds = function() {
   return Math.round(this.buildData.totalRunTime / 1000);
+};
+
+exports.detailViewURL = function() {
+  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var repoName = github.repository.full_name;
+  return path.join('/', repoName, 'jobs', String(this.buildData.id));
 };
 
 exports.totalRunningTime = function() {
