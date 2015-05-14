@@ -30,7 +30,12 @@ exports.authorGravatarURL = function() {
 
 exports.authorName = function() {
   var github = this.rawBuildRequest || this.buildInfo.rawBuildRequest;
-  return github.sender.name;
+  console.log(github.head_commit.author);
+  if (github.number) {
+    return github.pull_request.user.login;
+  } else {
+    return github.pusher.name;
+  }
 };
 
 exports.buildId = function() {

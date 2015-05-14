@@ -1,10 +1,13 @@
+'use strict';
+
 var express = require('express'),
   app = express(),
   path = require('path'),
   session = require('express-session'),
   lusca = require('lusca'),
   exphbs  = require('express-handlebars')
-  ReadData = require('sivart-data/ReadBuildData'),
+  Datastore = require('sivart-data/Datastore'),
+  Filestore = require('sivart-data/Filestore'),
   port = process.argv[2] || 8000,
   gcloud = require('gcloud'),
   helpers = require('./views/helpers/newHelpers') // be fancier about this
@@ -40,8 +43,8 @@ app.get('/:username/:repo', function (req, res) {
   var username = req.params.username;
   var repo = req.params.repo;
   var repoName = path.join(username, repo);
-  var readData = new ReadData(repoName);
-  readData.getSomePushBuilds(function(err, data) {
+  var datastore = new Datastore(repoName);
+  datastore.getSomePushBuilds(function(err, data) {
     if (err) {
       res.error();
     } else {
@@ -55,30 +58,30 @@ app.get('/:username/:repo/pull_requests', function (req, res) {
   var username = req.params.username;
   var repo = req.params.repo;
   var repoName = path.join(username, repo);
-  var readData = new ReadData(repoName);
-  readData.getSomePRBuilds(function(err, data) {
+  var datastore = new Datastore(repoName);
+  datastore.getSomePRBuilds(function(err, data) {
     data = data.reverse();
     res.render('home', { kind: 'pull_request', type: 'Pull Requests', builds: data, repoName: repoName });
   });
 });
 
 // view a single build
-app.get('/:username/:repo/jobs/:kind/:branch/:buildId/:buildNumber', function (req, res) {
+app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, res) {
   var username = req.params.username;
   var repo = req.params.repo;
-  var kind = req.params.kind;
   var repoName = path.join(username, repo);
   var branch = req.params.branch;
   var buildId = req.params.buildId;
   var buildNumber = req.params.buildNumber;
-  var readData = new ReadData(repoName);
-  readData.getABuild(kind, buildId, function(err, buildInfo) {
+  var datastore = new Datastore(repoName);
+  var filestore = new Filestore(repoName);
+  datastore.getABuild(buildId, function(err, buildInfo) {
     if (err) {
       console.log(err);
       // send 404?
       res.render('single', { mainLog: 'build not found', repoName: repoName });
     } else {
-      readData.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
+      filestore.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
         if (!err) {
           res.render('single', {
             buildInfo: buildInfo,
@@ -108,9 +111,9 @@ app.get('/getFile/:username/:repo/:branch/:buildId/:buildNumber/:filename', func
   var buildId = req.params.buildId;
   var buildNumber = req.params.buildNumber;
   var filename = req.params.filename;
-  var readData = new ReadData(repoName);
+  var filestore = new Filestore(repoName);
 
-  readData.getLogFile(branch, buildId, buildNumber, filename, function(err, contents) {
+  filestore.getLogFile(branch, buildId, buildNumber, filename, function(err, contents) {
     res.end(contents);
   });
 });
