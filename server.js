@@ -5,7 +5,7 @@ var express = require('express'),
   path = require('path'),
   session = require('express-session'),
   lusca = require('lusca'),
-  exphbs  = require('express-handlebars')
+  exphbs  = require('express-handlebars'),
   Datastore = require('sivart-data/Datastore'),
   Filestore = require('sivart-data/Filestore'),
   port = process.argv[2] || 8000,
@@ -49,7 +49,11 @@ app.get('/:username/:repo', function (req, res) {
       res.error();
     } else {
       data = data.reverse();
-      res.render('buildList', { kind: 'push', kind: 'push', type: 'Push', builds: data, repoName: repoName });
+      data = data.map(function(d) {
+        d.kind = 'push';
+        return d;
+      });
+      res.render('buildList', { type: 'Push', builds: data, repoName: repoName });
     }
   });
 });
@@ -61,7 +65,11 @@ app.get('/:username/:repo/pull_requests', function (req, res) {
   var datastore = new Datastore(repoName);
   datastore.getSomePRBuilds(function(err, data) {
     data = data.reverse();
-    res.render('home', { kind: 'pull_request', type: 'Pull Requests', builds: data, repoName: repoName });
+    data = data.map(function(d) {
+      d.kind = 'pull_request';
+      return d;
+    });
+    res.render('buildList', { type: 'Pull Requests', builds: data, repoName: repoName });
   });
 });
 

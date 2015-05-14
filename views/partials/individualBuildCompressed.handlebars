@@ -1,11 +1,11 @@
 <div class="{{overallBuildStatus}} tile tile--small tile--build row">
   <div class="tile-status">
     <span class="icon icon-status {{overallBuildStatus}}"></span>
-    <span class="request-kind {{../kind}} icon"></span>
+    <span class="request-kind {{kind}} icon"></span>
   </div>
   <div class="column tile-main medium-6">
     <h2>
-      <small>{{branch}}</small>
+      <small>{{title}}</small>
       <a href="{{detailViewURL}}">{{comment}}</a>
     </h2>
     <p class="tile-author"><img alt="" src="{{authorGravatarURL}}">{{authorName}} committed</p>
@@ -19,7 +19,7 @@
         </a>
       </p>
       <p>
-        <a href="{{githubCommitURL}}">
+        <a href="{{githubCommitURL}}" window="_blank">
           <span class="icon icon-github"></span>
             {{githubCommitNumber}}
         </a>
@@ -32,7 +32,7 @@
       </p>
       <p class="" title="{{timeStarted}}">
           <span class="icon icon-cal"></span>
-          {{timeStartedAgo}}
+          {{timeStartedAgo}} ago
       </p>
     </div>
   </div>
