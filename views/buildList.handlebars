@@ -1,3 +1,9 @@
-{{#each builds}}
-  {{>individualBuildCompressed}}
-{{/each}}
+{{#if builds}}
+  <ul class="list-unstyled">
+  {{#each builds}}
+    {{>individualBuildCompressed}}
+  {{/each}}
+  </ul>
+{{else}}
+  No builds
+{{/if}}

@@ -1,5 +1,18 @@
+{{#if errors}}
+<li class="tile tile--jobs row failed">
+    <div class="tile-status tile-status--job">
+      <span class="icon icon--job failed"></span>
+    </div>
+
+    <p class="jobs-item">
+      {{#each errors}}
+        {{this.message}}
+      {{/each}}
+    </p>
+</li>
+{{else}}
 <li class="tile tile--jobs row {{runState}}">
-  <a href="/{{repoName}}/jobs/{{branch}}/{{buildId}}/{{buildNumber}}">
+  <a data-repoName="{{repoName}}" data-branch="{{branch}}" data-buildId="{{buildId}}" data-buildNumber="{{buildNumber}}">
     <div class="tile-status tile-status--job">
       <span class="icon icon--job {{runState}}"></span>
     </div>
@@ -31,4 +44,4 @@
     </div>
   </a>
 </li>
-
+{{/if}}

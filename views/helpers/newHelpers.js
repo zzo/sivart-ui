@@ -45,6 +45,10 @@ exports.runState = function() {
   return state;
 };
 
+exports.crumbDisplay = function() {
+  return this.buildId ? 'block' : 'none';
+};
+
 exports.active_current = function() {
   return this.type === 'Current' ? 'active' : '';
 };

@@ -9,42 +9,40 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <style>
       span.header: { float: left; }
+      span.status_fail: { background-color: red }
     </style>
 </head>
 <body>
 <div class="container-fluid">
 
-<h1>{{repoName}} {{type}}</h1>
+<h1>{{repoName}}</h1>
 
 <div class="row">
 <div class="col-md-2"><h4><a class="btn btn-default {{active_current}} lead" href="/{{repoName}}/">Current</a></h4></div>
 <div class="col-md-2"><h4><a class="btn btn-default {{active_push}} lead" href="/{{repoName}}/push">Branches</a></h4></div>
 <div class="col-md-2"><h4><a class="btn btn-default {{active_pull_requests}} lead" href="/{{repoName}}/pull_requests">Pull Requests</a></h4></div>
+<div class="col-md-2"><h4><a id="buildId_crumb" href="#" style="display: {{crumbDisplay}}" class="btn btn-default active lead">Build #{{buildId}}</a></h4></div>
+<div class="col-md-2"><h4><a id="buildNumber_crumb" href="#" style="display: none" class="btn btn-default active lead"></a></h4></div>
 </div>
-<!--
-<div id="tabs">
-  <ul>
-    <li><a href="#tabs-1">Current</a></li>
-    <li><a href="/{{repoName}}/push">Branches</a></li>
-    <li><a href="/{{repoName}}/all">Build History</a></li>
-    <li><a href="/{{repoName}}/pull_requests">Pull Requests</a></li>
-  </ul>
-  <div id="tabs-1">
+
+<!--<div style="margin-left: 50px; margin-right: 50px; width: 70%">-->
+<div class="row">
+  <div class="col-md-2">
+    <ul class="list-unstyled">
+      <li><a href="/angular/angular.js">angular/angular.js</a></li>
+      <li><a href="/angular/angular">angular/angular</a></li>
+      <li><a href="/zzo/angular.js">zzo/angular.js</a></li>
+      <li><a href="/zzo/angular">zzo/angular</a></li>
+    </ul>
+  </div>
+  <div class="col-md-10">
     {{{body}}}
   </div>
 </div>
 
+</div>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-<script>
-$("#tabs").tabs();
-</script>
--->
-
-<div style="margin-left: 50px; margin-right: 50px; width: 70%">
-  {{{body}}}
-</div>
-
-</div>
+<script src="/process_logs.js"></script>
 </body>
 </html>
