@@ -40,12 +40,25 @@ app.use(lusca({
 app.use(express.static('static'));
 
 app.get('/:username/:repo', function (req, res) {
+  var username = req.params.username;
+  var repo = req.params.repo;
+  var repoName = path.join(username, repo);
+  var datastore = new Datastore(repoName);
+
   datastore.getSomePushBuilds(function(err, data) {
     if (err) {
       res.error();
     } else {
       data = data.reverse();
-      res.render('buildSingle', { type: 'Push', build: data[0], repoName: repoName });
+      var build = data[0];
+      build.yesFail = build.runs.filter(function(run) {
+        return run.ignoreFailure;
+      });
+      build.noFail = build.runs.filter(function(run) {
+        return !run.ignoreFailure;
+      });
+
+      res.render('buildSingle', { type: 'Push', build: build, repoName: repoName });
     }
   });
 });
@@ -110,8 +123,6 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
   var buildNumber = req.params.buildNumber;
   var datastore = new Datastore(repoName);
   var filestore = new Filestore(repoName);
-console.log('repo: ' + repoName);;
-console.log('buildId: ' + buildId);;
   datastore.getABuild(buildId, function(err, buildInfo) {
     if (err) {
       console.log(err);

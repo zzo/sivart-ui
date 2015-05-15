@@ -21,10 +21,12 @@ function fullCommand(match, command ,logfile, startTime, commandStatus, commandA
     + '&nbsp;seconds</span></span><br />';
 }
 
+/*
 $(elem).accordion({
   collapsible: true,
   heightStyle: "content"
 });
+*/
 
 // fetch log file or toggle if it's already there
 elem.on('click', '.command', function(e) {

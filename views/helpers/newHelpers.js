@@ -58,7 +58,7 @@ exports.title = function() {
   if (github.number) {
     return "PR #" + github.number;
   } else {
-    return this.branch;
+    return this.buildData.branch;
   }
 
 };
