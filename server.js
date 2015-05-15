@@ -9,7 +9,6 @@ var express = require('express'),
   Datastore = require('sivart-data/Datastore'),
   Filestore = require('sivart-data/Filestore'),
   port = process.argv[2] || 8000,
-  gcloud = require('gcloud'),
   helpers = require('./views/helpers/newHelpers') // be fancier about this
 ;
 

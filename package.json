@@ -13,7 +13,6 @@
     "express": "^4.12.3",
     "express-handlebars": "^2.0.1",
     "express-session": "^1.11.1",
-    "gcloud": "^0.14.0",
     "install": "^0.1.8",
     "lusca": "^1.1.0",
     "npm": "^2.9.0",
