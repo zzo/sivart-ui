@@ -40,6 +40,17 @@ app.use(lusca({
 app.use(express.static('static'));
 
 app.get('/:username/:repo', function (req, res) {
+  datastore.getSomePushBuilds(function(err, data) {
+    if (err) {
+      res.error();
+    } else {
+      data = data.reverse();
+      res.render('buildSingle', { type: 'Push', build: data[0], repoName: repoName });
+    }
+  });
+});
+
+app.get('/:username/:repo/push', function (req, res) {
   var username = req.params.username;
   var repo = req.params.repo;
   var repoName = path.join(username, repo);
@@ -76,6 +87,14 @@ app.get('/:username/:repo/jobs/:buildId', function (req, res) {
     if (err) {
       // 404?
     } else {
+      // split up the runs into allowed / notallowed failures
+      build.yesFail = build.runs.filter(function(run) {
+        return run.ignoreFailure;
+      });
+      build.noFail = build.runs.filter(function(run) {
+        return !run.ignoreFailure;
+      });
+
       res.render('buildSingle', { build: build, repoName: repoName });
     }
   });
@@ -91,6 +110,8 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
   var buildNumber = req.params.buildNumber;
   var datastore = new Datastore(repoName);
   var filestore = new Filestore(repoName);
+console.log('repo: ' + repoName);;
+console.log('buildId: ' + buildId);;
   datastore.getABuild(buildId, function(err, buildInfo) {
     if (err) {
       console.log(err);
@@ -105,10 +126,10 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
             buildId: buildId,
             buildNumber: buildNumber,
             mainLog: data.toString(),
-            repoName: repoName,
-            type: kind
+            repoName: repoName
           });
         } else {
+          console.log(err);
           if (err.code === 404) {
             // send 404?
             res.render('single', { mainLog: 'build not found', repoName: repoName });

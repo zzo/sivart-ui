@@ -5,34 +5,29 @@
     <title>Sivart</title>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" href="https://travis-ci-org.global.ssl.fastly.net/assets/travis-dd949bf9a74f9732154d48c33bd61764.css">
-    <style>
-      div.build, #mainData { 
-        background-color: #eee;
-        box-shadow: 1px 1px 1px 1px #ccc;
-        font-family: "Source Sans Pro",Helvetica,sans-serif;
-        font-weight: 400;
-        font-style: normal;
-        width: 80%;
-      }
-      .status_fail {
-        background-color: red;
-      }
-      .status_error {
-        background-color: orange;
-      }
-      .command_time {
-        float: right;
-      }
-      .command {
-        cursor: pointer;
-      }
-      h1 {
-        margin-left: 20px;
-      }
-    </style>
 </head>
 <body>
 <h1>{{repoName}} {{type}}</h1>
+
+<!--
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Current</a></li>
+    <li><a href="/{{repoName}}/push">Branches</a></li>
+    <li><a href="/{{repoName}}/all">Build History</a></li>
+    <li><a href="/{{repoName}}/pull_requests">Pull Requests</a></li>
+  </ul>
+  <div id="tabs-1">
+    {{{body}}}
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script>
+$("#tabs").tabs();
+</script>
+-->
 
 <div style="margin-left: 50px; margin-right: 50px; width: 70%">
   {{{body}}}

@@ -33,7 +33,7 @@ elem.on('click', '.command', function(e) {
   var logfile = $(this).attr('data-logfile');
   if (me.hasClass('notloaded')) {
     pieces.shift();
-    var path = ['/getFile', pieces[0], pieces[1], pieces[4], pieces[5], pieces[6], logfile].join('/');
+    var path = ['/getFile', pieces[0], pieces[1], pieces[3], pieces[4], pieces[5], logfile].join('/');
     $.ajax(path).done(function(data) {
       var lines = data.split('\n');
       lines.shift();

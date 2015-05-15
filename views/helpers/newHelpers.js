@@ -2,14 +2,6 @@
 
 var path = require('path');
 
-exports.detailViewURL = function() {
-  var state = this.buildData.state || 'passed';
-  if (state === 'building' || state === 'running') {
-    state = 'started';
-  }
-  return state;
-};
-
 exports.compareURL = function() {
   var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
@@ -36,6 +28,21 @@ exports.getBody = function() {
 // TODO
     return github.head_commit.body;
   }
+};
+
+exports.runState = function() {
+  var state = this.state;
+  if (state === 'building' || state === 'running') {
+    state = 'started';
+  }
+  if (state === 'error') {
+    state = 'errored';
+  }
+  if (state === 'fail') {
+    state = 'failed';
+  }
+
+  return state;
 };
 
 exports.overallBuildStatus = function() {
@@ -79,6 +86,7 @@ exports.authorName = function() {
   }
 };
 
+/*
 exports.buildId = function() {
   if (this.buildData) {
     return this.buildData.id;
@@ -87,10 +95,11 @@ exports.buildId = function() {
     console.log(this);
   }
 };
+*/
 
 exports.runningOrRan = function() {
   var status = exports.overallBuildStatus.call(this);
-  return status === 'running' ? 'running' : 'ran';
+  return (status === 'started') ? 'running' : 'ran';
 };
 
 exports.githubCommitURL = function() {
@@ -113,7 +122,11 @@ exports.githubCommitNumber = function() {
 };
 
 exports.totalSeconds = function() {
-  return Math.round(this.buildData.totalRunTime / 1000);
+  var total = this.buildData.totalRunTime;
+  if (!total) {
+    total = new Date().getTime() - this.buildData.created;
+  }
+  return Math.round(total / 1000);
 };
 
 exports.detailViewURL = function() {
@@ -123,7 +136,11 @@ exports.detailViewURL = function() {
 };
 
 exports.totalRunningTime = function() {
-  return convert(this.buildData.totalRunTime / 1000);
+  var total = this.buildData.totalRunTime;
+  if (!total) {
+    total = new Date().getTime() - this.buildData.created;
+  }
+  return convert(total / 1000);
 };
 
 exports.timeStarted = function() {
@@ -136,6 +153,27 @@ exports.timeStartedAgo = function() {
   return convert(diff / 1000);
 };
 
+exports.allowedFailures = function() {
+  return this.runs.reduce(function(previous, run) {
+    return previous || run.ignoreFailure;
+  }, false);
+};
+
+exports.getAllowedFailures = function() {
+  return this.runs.map(function(run) {
+    if (run.ignoreFailure) {
+      return run;
+    }
+  });
+};
+
+exports.runTotalTime = function() {
+  var updated = this.updated;
+  if (!updated) {
+    updated = new Date().getTime();
+  }
+  return convert((updated - this.created) / 1000);
+};
 
 function convert(sec_num) {
   var days = Math.floor(sec_num / 86400);
