@@ -167,6 +167,9 @@ app.get('/getFile/:username/:repo/:branch/:buildId/:buildNumber/:filename', func
   var filestore = new Filestore(repoName);
 
   filestore.getLogFile(branch, buildId, buildNumber, filename, function(err, contents) {
+    if (err) {
+      console.log('error fetching file');
+    }
     res.end(contents);
   });
 });

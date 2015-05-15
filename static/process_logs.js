@@ -1,29 +1,18 @@
 var runsList;
-var runOutput = [];
-var currentBuildNumber;
-var currentBuildId;
 
 $(function() {
-  $("#runData").on('click', 'a', function() {
+  $("#runData").on('click', 'a.runRowItem', function() {
     var repoName = $(this).attr('data-repoName');
     var branch = $(this).attr('data-branch');
     var buildId = $(this).attr('data-buildId');
     var buildNumber = $(this).attr('data-buildNumber');
     var path = [repoName, 'jobs', branch, buildId, buildNumber].join('/');
-    currentBuildNumber = buildNumber;
-    currentBuildId = buildId;
-    if (runOutput[currentBuildNumber]) {
-      var elem = $('#runData');
-      elem.html(runOutput[currentBuildNumber]);
-    } else {
-      $.getJSON('/' + path, displayLog);
-    }
+    $.getJSON('/' + path, displayLog);
   });
 });
 
 function displayRunsList()  {
   var elem = $('#runData');
-  runOutput[currentBuildNumber] = elem.html();
   elem.html(runsList);
 
   var crumb = $('#buildNumber_crumb');
@@ -61,29 +50,26 @@ function displayLog(data)  {
   elem.html(log);
 
   function fullCommand(match, command ,logfile, startTime, commandStatus, commandAgain, seconds) {
-    return '<span data-logfile="' + logfile + '" class="command notloaded"><span class="toggle">+</span>&nbsp;'
-      + '<span class="command_line status_' + commandStatus +'">' 
-      + command 
-      + '</span>&nbsp;<span class="command_time">' 
-      + seconds 
-      + '&nbsp;seconds</span></span><br />';
+    var status = commandStatus === 'SUCCEEDED' ? 'passed' : 'failed'
+    return '<div data-buildNumber="' + data.buildNumber +'" class="command notloaded" data-logfile="' + logfile + '">'
+    + '<li class="tile tile--jobs row list-unstyled ' + status + '">'
+    + '<div class="tile-status tile-status--job">'
+    +   '<span class="icon icon--job ' + status  + '"></span>'
+    + '</div>'
+    + '<p style="margin-left: 30px" class="job-ib jobs-item build-status">' 
+    + command 
+    + '</p><p class="job-duration jobs-item">' 
+    + seconds 
+    + ' seconds</p></li></div>';
   }
-
-  /*
-  $(elem).accordion({
-    collapsible: true,
-    heightStyle: "content"
-  });
-  */
 
   // fetch log file or toggle if it's already there
   elem.on('click', '.command', function(e) {
-    var pieces = $(location).attr('pathname').split('/');
     var me = $(this);
     var logfile = $(this).attr('data-logfile');
+    var buildNumber = $(this).attr('data-buildNumber');
     if (me.hasClass('notloaded')) {
-      pieces.shift();
-      var path = ['/getFile', data.repoName, data.branch, data.buildId, data.buildNumber, logfile].join('/');
+      var path = ['/getFile', data.repoName, data.branch, data.buildId, buildNumber, logfile].join('/');
       $.ajax(path).done(function(data) {
         var lines = data.split('\n');
         lines.shift();
@@ -91,18 +77,15 @@ function displayLog(data)  {
         lines.pop();
         data = lines.join('\n');
         data = data.replace(/</g, '&lt;');
-        me.append('<pre>' + data + '</pre>');
+        if (data) {
+          me.append('<pre>' + data + '</pre>');
+        } else {
+          me.append('<pre>No output</pre>');
+        }
       });
       me.removeClass('notloaded');
-      me.children('.toggle').html('-');
     } else {
       me.children('pre').toggle();
-      var current = me.children('.toggle').html();
-      var next = '-';
-      if (current === '-') {
-        next = '+';
-      }
-      me.children('.toggle').html(next);
     }
   });
 }
