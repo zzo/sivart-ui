@@ -45,6 +45,18 @@ exports.runState = function() {
   return state;
 };
 
+exports.active_current = function() {
+  return this.type === 'Current' ? 'active' : '';
+};
+
+exports.active_push = function() {
+  return this.type === 'Branches' ? 'active' : '';
+};
+
+exports.active_pull_requests = function() {
+  return this.type === 'Pull Requests' ? 'active' : '';
+};
+
 exports.overallBuildStatus = function() {
   var state = this.buildData.state || 'passed';
   if (state === 'building' || state === 'running') {

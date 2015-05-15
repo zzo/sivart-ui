@@ -17,9 +17,9 @@
 <h1>{{repoName}} {{type}}</h1>
 
 <div class="row">
-<div class="col-md-2"><h4><a class="lead" href="/{{repoName}}/">Current</a></h4></div>
-<div class="col-md-2"><h4><a class="lead" href="/{{repoName}}/push">Branches</a></h4></div>
-<div class="col-md-2"><h4><a class="lead" href="/{{repoName}}/pull_requests">Pull Requests</a></h4></div>
+<div class="col-md-2"><h4><a class="btn btn-default {{active_current}} lead" href="/{{repoName}}/">Current</a></h4></div>
+<div class="col-md-2"><h4><a class="btn btn-default {{active_push}} lead" href="/{{repoName}}/push">Branches</a></h4></div>
+<div class="col-md-2"><h4><a class="btn btn-default {{active_pull_requests}} lead" href="/{{repoName}}/pull_requests">Pull Requests</a></h4></div>
 </div>
 <!--
 <div id="tabs">

@@ -58,7 +58,7 @@ app.get('/:username/:repo', function (req, res) {
         return !run.ignoreFailure;
       });
 
-      res.render('buildSingle', { type: 'Push', build: build, repoName: repoName });
+      res.render('buildSingle', { type: 'Current', build: build, repoName: repoName });
     }
   });
 });
@@ -73,7 +73,7 @@ app.get('/:username/:repo/push', function (req, res) {
       res.error();
     } else {
       data = data.reverse();
-      res.render('buildList', { type: 'Push', builds: data, repoName: repoName });
+      res.render('buildList', { type: 'Branches', builds: data, repoName: repoName });
     }
   });
 });
