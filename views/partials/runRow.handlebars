@@ -1,0 +1,34 @@
+<li class="tile tile--jobs row {{runState}}">
+  <a href="/{{repoName}}/jobs/{{branch}}/{{buildId}}/{{buildNumber}}">
+    <div class="tile-status tile-status--job">
+      <span class="icon icon--job {{runState}}"></span>
+    </div>
+
+    <p class="job-id jobs-item build-status">
+      <span class="icon icon--hash-dark"></span>
+        {{buildId}}.{{buildNumber}}
+    </p>
+
+    <p class="job-os jobs-item build-os linux">
+      <span class="icon linux"></span>
+    </p>
+
+    <p class="job-lang jobs-item build-lang">
+      <span class="icon icon--lang"></span>
+      Node.js: {{nodeVersion}}
+    </p>
+
+    <div class="job-anchor jobs-item">
+      <p class="job-env jobs-item build-env">
+        <span class="icon icon--env"></span>
+        {{matrix}}
+      </p>
+
+      <p class="job-duration jobs-item" title="{{runCreated}}">
+        <span class="icon icon--clock-dark"></span>
+        {{runTotalTime}}
+      </p>
+    </div>
+  </a>
+</li>
+
