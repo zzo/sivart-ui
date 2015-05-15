@@ -170,3 +170,4 @@ app.get('/getFile/:username/:repo/:branch/:buildId/:buildNumber/:filename', func
 
 console.log('Listening on %s', port);
 app.listen(port);
+console.log('__ALIVE__');
