@@ -38,6 +38,10 @@ app.use(lusca({
 
 app.use(express.static('static'));
 
+app.get('/', function (req, res) {
+  res.render('buildSingle', { });
+});
+
 app.get('/:username/:repo', function (req, res) {
   var username = req.params.username;
   var repo = req.params.repo;
