@@ -10,14 +10,12 @@ $(function() {
     var buildId = $(this).attr('data-buildId');
     var buildNumber = $(this).attr('data-buildNumber');
     var path = [repoName, 'jobs', branch, buildId, buildNumber].join('/');
-    console.log(path);
     currentBuildNumber = buildNumber;
     currentBuildId = buildId;
     if (runOutput[currentBuildNumber]) {
       var elem = $('#runData');
       elem.html(runOutput[currentBuildNumber]);
     } else {
-    console.log('JSON request');
       $.getJSON('/' + path, displayLog);
     }
   });
