@@ -53,7 +53,8 @@ function displayLog(data)  {
     // live log info just dump the data
     var seen_length = 0;
     log = log.replace(/</g, '&lt;');
-    elem.html('<pre>' + log + '</pre>');
+    var html = '<pre class="commandOutput"><code>' + log + '</code></pre>';
+    elem.html(html);
 
     function getMoreLog() {
       var path = [data.repoName, 'jobs', data.branch, data.buildId, data.buildNumber].join('/');
@@ -62,8 +63,8 @@ function displayLog(data)  {
           contents = data.mainLog.slice(seen_length);
           seen_length += contents.length;
           contents = contents.replace(/</g, '&lt;');
-          var pre = elem.find('pre');
-          pre.html(pre.html() + contents);
+          var code = elem.find('code');
+          code.html(code.html() + contents);
           setTimeout(getMoreLog, 5000);
         } else {
           displayLog(data);
@@ -87,7 +88,7 @@ function displayLog(data)  {
     + '</p><p class="job-duration jobs-item">' 
     + seconds 
     + ' seconds</p></li>'
-    + '<pre class="commandOutput" style="overflow: auto; display: none"><code>' + commandLog + '</code></pre>';
+    + '<pre class="commandOutput" style="display: none"><code>' + commandLog + '</code></pre>';
   }
 
   elem.on('click', '.command', function(e) {
