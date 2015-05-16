@@ -37,22 +37,48 @@ function displayLog(data)  {
   crumb.html('Build #' + data.buildId);
   crumb.click(displayRunsList);
 
-  //var data = elem.html();
-  log = log.replace(/^-+ START ([^-]+) -+$/mg, '<h3>$1</h3><div>');
-  log = log.replace(/^-+ END ([^-]+) -+$/mg, '</div>');
-  log = log.replace(/<h3>Save Logs<\/h3>.+$/, '');
+  if (data.status != 'running') {
+    log = log.replace(/^-+ START ([^-]+) -+$/mg, '<h3>$1</h3><div>');
+    log = log.replace(/^-+ END ([^-]+) -+$/mg, '</div>');
+    log = log.replace(/<h3>Save Logs<\/h3>.+$/, '');
+  
+    var test = /--COMMAND START: (.+): \/tmp\/sivart\/logs\/([^:]+): (.+)\n([^]*?)--COMMAND (\w+): (.+): (\d+) seconds\n/;
+    while (log.match(test)) {
+      log = log.replace(test, fullCommand);
+    }
 
-  var test = /--COMMAND START: (.+): \/tmp\/sivart\/logs\/([^:]+): (.+)\n--COMMAND (\w+): (.+): (\d+) seconds\n/;
-  while (log.match(test)) {
-    log = log.replace(test, fullCommand);
+    elem.html(log);
+
+  } else {
+    // live log info just dump the data
+    var seen_length = 0;
+    log = log.replace(/</g, '&lt;');
+    elem.html('<pre>' + log + '</pre>');
+
+    function getMoreLog() {
+      var path = [data.repoName, 'jobs', data.branch, data.buildId, data.buildNumber].join('/');
+      $.getJSON('/' + path, function(data) {
+        if (data.status === 'running') {
+          contents = data.mainLog.slice(seen_length);
+          seen_length += contents.length;
+          contents = contents.replace(/</g, '&lt;');
+          var pre = elem.find('pre');
+          pre.html(pre.html() + contents);
+          setTimeout(getMoreLog, 5000);
+        } else {
+          displayLog(data);
+        }
+      });
+    }
+    setTimeout(getMoreLog, 5000);
   }
 
-  elem.html(log);
-
-  function fullCommand(match, command ,logfile, startTime, commandStatus, commandAgain, seconds) {
+  function fullCommand(match, command ,logfile, startTime, commandLog, commandStatus, commandAgain, seconds) {
     var status = commandStatus === 'SUCCEEDED' ? 'passed' : 'failed'
-    return '<div data-buildNumber="' + data.buildNumber +'" class="command notloaded" data-logfile="' + logfile + '">'
-    + '<li class="tile tile--jobs row list-unstyled ' + status + '">'
+    commandLog = commandLog.replace(/</g, '&lt;');
+    commandLog = commandLog || 'no output';
+
+    return '<li class="command tile tile--jobs row list-unstyled ' + status + '">'
     + '<div class="tile-status tile-status--job">'
     +   '<span class="icon icon--job ' + status  + '"></span>'
     + '</div>'
@@ -60,32 +86,15 @@ function displayLog(data)  {
     + command 
     + '</p><p class="job-duration jobs-item">' 
     + seconds 
-    + ' seconds</p></li></div>';
+    + ' seconds</p></li>'
+    + '<pre class="commandOutput" style="overflow: auto; display: none"><code>' + commandLog + '</code></pre>';
   }
 
-  // fetch log file or toggle if it's already there
   elem.on('click', '.command', function(e) {
-    var me = $(this);
-    var logfile = $(this).attr('data-logfile');
-    var buildNumber = $(this).attr('data-buildNumber');
-    if (me.hasClass('notloaded')) {
-      var path = ['/getFile', data.repoName, data.branch, data.buildId, buildNumber, logfile].join('/');
-      $.ajax(path).done(function(data) {
-        var lines = data.split('\n');
-        lines.shift();
-        lines.pop();
-        lines.pop();
-        data = lines.join('\n');
-        data = data.replace(/</g, '&lt;');
-        if (data) {
-          me.append('<pre>' + data + '</pre>');
-        } else {
-          me.append('<pre>No output</pre>');
-        }
-      });
-      me.removeClass('notloaded');
-    } else {
-      me.children('pre').toggle();
-    }
+    $(this).next().toggle();
+  });
+
+  elem.on('click', '.commandOutput', function(e) {
+    $(this).toggle();
   });
 }

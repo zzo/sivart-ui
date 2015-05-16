@@ -1,4 +1,5 @@
 'use strict';
+var fs =require('fs');
 
 var express = require('express'),
   app = express(),
@@ -9,7 +10,9 @@ var express = require('express'),
   Datastore = require('sivart-data/Datastore'),
   Filestore = require('sivart-data/Filestore'),
   port = process.argv[2] || 8000,
-  helpers = require('./views/helpers/newHelpers') // be fancier about this
+  helpers = require('./views/helpers/newHelpers'), // be fancier about this
+  Instance = require('sivart-GCE/Instance'), // for tailing live VM output
+  Auth = require('sivart-GCE/Auth') // for tailing live VM output
 ;
 
 app.engine('handlebars', exphbs({
@@ -133,22 +136,41 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
   datastore.getABuild(buildId, function(err, buildInfo) {
     if (err) {
       // send 404?
-      res.render('single', { mainLog: 'build not found', repoName: repoName });
+      res.json({ mainLog: 'build ' + buildId + ' not found', repoName: repoName });
     } else {
-      filestore.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
-        if (!err) {
-          res.json({
-            buildInfo: buildInfo,
-            branch: branch,
-            buildId: buildId,
-            buildNumber: buildNumber,
-            mainLog: data.toString(),
-            repoName: repoName
-          });
-        } else {
-          if (err.code === 404) {
-            // send 404?
-            res.render('single', { mainLog: 'build not found', repoName: repoName });
+      buildInfo.runs.forEach(function(run) {
+        if (String(run.buildNumber) === buildNumber) {
+          if (run.state === 'running' || run.state === 'building') {
+            var instance = new Instance(Auth.projectId, Auth.zone, run.instanceName);
+            instance.getSerialConsoleOutput(function(err, output) {
+              res.json({
+                mainLog: output.contents,
+                status: 'running',
+                branch: branch,
+                buildId: buildId,
+                buildNumber: buildNumber,
+                repoName: repoName
+              });
+            });
+          } else {
+            var data = fs.readFileSync('user_script.log');
+            var err;
+//            filestore.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
+              if (!err) {
+                res.json({
+                  branch: branch,
+                  buildId: buildId,
+                  buildNumber: buildNumber,
+                  mainLog: data.toString(),
+                  repoName: repoName
+                });
+              } else {
+                if (err.code === 404) {
+                  // send 404?
+                  res.json({ mainLog: 'main log file for ' + buildId + ' not found', repoName: repoName });
+                }
+              }
+//            });
           }
         }
       });
