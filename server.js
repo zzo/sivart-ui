@@ -153,9 +153,8 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
               });
             });
           } else {
-            var data = fs.readFileSync('user_script.log');
             var err;
-//            filestore.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
+            filestore.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
               if (!err) {
                 res.json({
                   branch: branch,
@@ -170,7 +169,7 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
                   res.json({ mainLog: 'main log file for ' + buildId + ' not found', repoName: repoName });
                 }
               }
-//            });
+            });
           }
         }
       });

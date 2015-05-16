@@ -52,6 +52,8 @@ function displayLog(data)  {
   } else {
     // live log info just dump the data
     var seen_length = log.length;
+    log = log.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
+    log = log.replace(/^[\s\S]+?startupscript: /mg, '');
     log = log.replace(/</g, '&lt;');
     var html = '<pre class="commandOutput"><code>' + log + '</code></pre>';
     elem.html(html);
@@ -62,6 +64,8 @@ function displayLog(data)  {
         if (data.status === 'running') {
           contents = data.mainLog.slice(seen_length);
           seen_length += contents.length;
+          contents = contents.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
+          contents = contents.replace(/^[\s\S]+?startupscript: /mg, '');
           contents = contents.replace(/</g, '&lt;');
           var code = elem.find('code');
           code.html(code.html() + contents);
