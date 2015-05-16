@@ -153,7 +153,6 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
               });
             });
           } else {
-            var err;
             filestore.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
               if (!err) {
                 res.json({
