@@ -51,7 +51,7 @@ function displayLog(data)  {
 
   } else {
     // live log info just dump the data
-    var seen_length = 0;
+    var seen_length = log.length;
     log = log.replace(/</g, '&lt;');
     var html = '<pre class="commandOutput"><code>' + log + '</code></pre>';
     elem.html(html);
