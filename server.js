@@ -143,14 +143,18 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
           if (run.state === 'running' || run.state === 'building') {
             var instance = new Instance(Auth.projectId, Auth.zone, run.instanceName);
             instance.getSerialConsoleOutput(function(err, output) {
-              res.json({
-                mainLog: output.contents,
-                status: 'running',
-                branch: branch,
-                buildId: buildId,
-                buildNumber: buildNumber,
-                repoName: repoName
-              });
+              if (err) {
+                res.json({ mainLog: 'Error fetching build log', repoName: repoName });
+              } else {
+                res.json({
+                  mainLog: output.contents,
+                  status: 'running',
+                  branch: branch,
+                  buildId: buildId,
+                  buildNumber: buildNumber,
+                  repoName: repoName
+                });
+              }
             });
           } else {
             filestore.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
