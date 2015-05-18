@@ -26,7 +26,7 @@ exports.getBody = function() {
     return github.pull_request.body;
   } else {
 // TODO
-    return github.head_commit.body;
+    return github.head_commit.message;
   }
 };
 
@@ -101,17 +101,6 @@ exports.authorName = function() {
     return github.pusher.name;
   }
 };
-
-/*
-exports.buildId = function() {
-  if (this.buildData) {
-    return this.buildData.id;
-  } else {
-    console.log('no build data');
-    console.log(this);
-  }
-};
-*/
 
 exports.runningOrRan = function() {
   var status = exports.overallBuildStatus.call(this);

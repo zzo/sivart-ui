@@ -92,14 +92,10 @@ function displayLog(data)  {
     + '</p><p class="job-duration jobs-item">' 
     + seconds 
     + ' seconds</p></li>'
-    + '<pre class="commandOutput" style="display: none"><code>' + commandLog + '</code></pre>';
+    + '<pre class="commandOutput" style="display: none"><code>' + ansi2html(commandLog) + '</code></pre>';
   }
 
   elem.on('click', '.command', function(e) {
     $(this).next().toggle();
-  });
-
-  elem.on('click', '.commandOutput', function(e) {
-    $(this).toggle();
   });
 }
