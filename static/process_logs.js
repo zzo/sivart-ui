@@ -65,7 +65,7 @@ function displayLog(data)  {
     log = log.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
     log = log.replace(/^[\s\S]+?startupscript: /mg, '');
     log = log.replace(/</g, '&lt;');
-    var html = '<pre class="commandOutput"><code>' + log + '</code></pre>';
+    var html = '<pre class="commandOutput"><code>' + ansi2html(log) + '</code></pre>';
     elem.html(html);
 
     function getMoreLog() {
@@ -78,7 +78,7 @@ function displayLog(data)  {
           contents = contents.replace(/^[\s\S]+?startupscript: /mg, '');
           contents = contents.replace(/</g, '&lt;');
           var code = elem.find('code');
-          code.html(code.html() + contents);
+          code.html(code.html() + ansi2html(contents));
           setTimeout(getMoreLog, 5000);
         } else {
           displayLog(data);
