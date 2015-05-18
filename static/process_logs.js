@@ -49,6 +49,16 @@ function displayLog(data)  {
 
     elem.html(log);
 
+    if (data.status !== 'passed') {
+      // open last last file & scroll to it to see error immediately
+      var failed = $('li.failed');
+      if (failed) {
+        failed.click();
+        failed.next().toggle();
+        $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+      }
+    }
+
   } else {
     // live log info just dump the data
     var seen_length = log.length;
