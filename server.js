@@ -164,7 +164,8 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
                   buildId: buildId,
                   buildNumber: buildNumber,
                   mainLog: data.toString(),
-                  repoName: repoName
+                  repoName: repoName,
+                  baseURL: filestore.getBasePublicURL(branch, buildId, buildNumber)
                 });
               } else {
                 if (err.code === 404) {
@@ -179,6 +180,8 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
     }
   });
 });
+
+//https://console.developers.google.com/m/cloudstorage/b/sivart-angular-angular/o/branch-master/237/3/user-script.log
 
 app.get('/getFile/:username/:repo/:branch/:buildId/:buildNumber/:filename', function (req, res) {
   var username = req.params.username;
