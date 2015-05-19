@@ -60,7 +60,7 @@ function displayLog(data)  {
     log = log.replace(/^[\s\S]+?startupscript: /mg, '');
     log = log.replace(/</g, '&lt;');
     log = log.replace(//g, '');
-    var html = '<pre class="commandOutput"><code>' + ansi2html(log) + '</code></pre>';
+    var html = '<pre class="ansi commandOutput"><code>' + getDeansiHtml(log) + '</code></pre>';
     elem.html(html);
 
     function getMoreLog() {
@@ -72,8 +72,9 @@ function displayLog(data)  {
           contents = contents.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
           contents = contents.replace(/^[\s\S]+?startupscript: /mg, '');
           contents = contents.replace(/</g, '&lt;');
+          contents = contents.replace(//g, '');
           var code = elem.find('code');
-          code.html(code.html() + ansi2html(contents));
+          code.html(code.html() + getDeansiHtml(contents));
           setTimeout(getMoreLog, 5000);
         } else {
           displayLog(data);
@@ -114,7 +115,7 @@ function displayLog(data)  {
       + '</p><p class="job-duration jobs-item">'
       + seconds
       + ' seconds</p></li>'
-      + '<pre class="commandOutput" style="display: none"><code></code></pre>';
+      + '<pre class="ansi commandOutput" style="display: none"><code></code></pre>';
   }
 }
 
@@ -139,7 +140,7 @@ function setupEvents(elem, data) {
         lines.pop();
         data = lines.join('\n');
         data = data.replace(/</g, '&lt;') || 'no output';
-        me.next().html(ansi2html(data));
+        me.next().html(getDeansiHtml(data));
       });
       me.next().toggle();
       me.removeClass('notloaded');
@@ -147,4 +148,74 @@ function setupEvents(elem, data) {
       me.next().toggle();
     }
   });
+}
+
+Deansi = {
+  CLEAR_ANSI: /(?:\033)(?:\[0?c|\[[0356]n|\[7[lh]|\[\?25[lh]|\(B|H|\[(?:\d+(;\d+){,2})?G|\[(?:[12])?[JK]|[DM]|\[0K)/gm,
+  apply: function(string) {
+    var nodes,
+      _this = this;
+    if (!string) {
+      return [];
+    }
+    string = string.replace(this.CLEAR_ANSI, '');
+    nodes = ansiparse(string).map(function(part) {
+      return _this.node(part);
+    });
+    return nodes;
+  },
+  node: function(part) {
+    var classes, node;
+    node = {
+      type: 'span',
+      text: part.text
+    };
+    if (classes = this.classes(part)) {
+      node["class"] = classes.join(' ');
+    }
+    return node;
+  },
+  classes: function(part) {
+    var result;
+    result = [];
+    result = result.concat(this.colors(part));
+    if (result.length > 0) {
+      return result;
+    }
+  },
+  colors: function(part) {
+    var colors;
+    colors = [];
+    if (part.foreground) {
+      colors.push(part.foreground);
+    }
+    if (part.background) {
+      colors.push("bg-" + part.background);
+    }
+    if (part.bold) {
+      colors.push('bold');
+    }
+    if (part.italic) {
+      colors.push('italic');
+    }
+    if (part.underline) {
+      colors.push('underline');
+    }
+    return colors;
+  },
+  hidden: function(part) {
+    if (part.text.match(/\r/)) {
+      part.text = part.text.replace(/^.*\r/gm, '');
+      return true;
+    }
+  }
+};
+
+function getDeansiHtml(string) {
+  nodes = Deansi.apply(string);
+  var html = '';
+  nodes.forEach(function(node) {
+    html += '<span class="' + (node.class || '') + '">' + node.text + '</span>';
+  });
+  return html;
 }
