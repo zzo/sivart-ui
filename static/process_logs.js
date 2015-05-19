@@ -11,19 +11,10 @@ $(function() {
   });
 });
 
-function displayRunsList()  {
-  var elem = $('#runData');
-  elem.html(runsList);
-
-  var crumb = $('#buildNumber_crumb');
-  crumb.hide();
-
-  var crumb = $('#buildId_crumb');
-  crumb.addClass('active');
-}
-
 function displayLog(data)  {
   var elem = $('#runData');
+  setupEvents(elem, data);
+
   runsList = elem.html();
   var log = data.mainLog;
 
@@ -35,7 +26,7 @@ function displayLog(data)  {
   crumb.removeClass('active');
   crumb.show();
   crumb.html('Build #' + data.buildId);
-  crumb.click(displayRunsList);
+  crumb.attr('href', '/' + data.repoName + '/jobs/' + data.buildId);
 
   if (data.status != 'running') {
     log = log.replace(/^-+ START ([^-]+) -+$/mg, '<h3>$1</h3><div>');
@@ -52,12 +43,14 @@ function displayLog(data)  {
     // open last last file & scroll to it to see error immediately if there was a failure
     var failed = $('li.failed');
     if (failed.length) {
-      /*
-      failed.click();
-      setTimeout(function() {
+      failed.trigger('click');
+      $(document).ajaxComplete(function(event, xhr, settings)  {
         $("html, body").animate({ scrollTop: $(document).height() }, "slow");
-      }, 2000);
-      */
+        // keep scrolling to the bottom until we've got the file
+        if (settings.url.match(/^\/getFile/)) {
+          $(document).off('ajaxComplete');
+        }
+      });
     }
 
   } else {
@@ -117,13 +110,15 @@ function displayLog(data)  {
       + '<p style="margin-left: 30px" class="job-ib jobs-item build-status">'
       + command
       + '</p><p class="job-duration jobs-item">'
-      + '<a href="' + logfileURL + logfile + '" target="_blank" style="cursor: pointer" class="glyphicon glyphicon-download" aria-hidden="true"></a>'
+      + '<a href="' + logfileURL + logfile + '" title="Download log file" target="_blank" style="cursor: pointer" class="glyphicon glyphicon-download" aria-hidden="true"></a>'
       + '</p><p class="job-duration jobs-item">'
       + seconds
       + ' seconds</p></li>'
       + '<pre class="commandOutput" style="display: none"><code></code></pre>';
   }
+}
 
+function setupEvents(elem, data) {
   elem.on('click', '.glyphicon-download', function(e) {
     var logfile = $(this).attr('data-logfile');
     var buildNumber = $(this).attr('data-buildNumber');
@@ -152,10 +147,4 @@ function displayLog(data)  {
       me.next().toggle();
     }
   });
-
-/*
-  elem.on('click', '.command', function(e) {
-    $(this).next().toggle();
-  });
-*/
 }
