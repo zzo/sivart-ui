@@ -42,6 +42,10 @@ function displayLog(data)  {
 
     // open last last file & scroll to it to see error immediately if there was a failure
     var failed = $('li.failed');
+    var errored = $('li.errored');
+    if (!failed.length && errored.length) {
+      failed = errored;
+    }
     if (failed.length) {
       failed.trigger('click');
       $(document).ajaxComplete(function(event, xhr, settings)  {
