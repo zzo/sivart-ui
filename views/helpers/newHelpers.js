@@ -35,10 +35,10 @@ exports.runState = function() {
   if (state === 'building' || state === 'running') {
     state = 'started';
   }
-  if (state === 'error' || state === 'timedout' || state === 'exited') {
+  if (state === 'errored' || state === 'timedout' || state === 'exited') {
     state = 'errored';
   }
-  if (state === 'fail') {
+  if (state === 'failed') {
     state = 'failed';
   }
 
