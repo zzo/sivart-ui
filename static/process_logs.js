@@ -98,10 +98,13 @@ function displayLog(data)  {
   } else {
     // live log info just dump the data
     var seen_length = log.length;
-    log = log.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
-    log = log.replace(/^[\s\S]+?startupscript: /mg, '');
+// need theses lines if pulling in serial console log 
+//    log = log.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
+//    log = log.replace(/^[\s\S]+?startupscript: /mg, '');
     log = log.replace(/</g, '&lt;');
     log = log.replace(//g, '');
+    console.log('about to set');
+    console.log(log);
     var html = '<pre class="ansi commandOutput"><code>' + getDeansiHtml(log) + '</code></pre>';
     elem.html(html);
 
@@ -111,12 +114,17 @@ function displayLog(data)  {
         if (data.status === 'running') {
           contents = data.mainLog.slice(seen_length);
           seen_length += contents.length;
-          contents = contents.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
-          contents = contents.replace(/^[\s\S]+?startupscript: /mg, '');
+// need theses lines if pulling in serial console log 
+ //         contents = contents.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
+//          contents = contents.replace(/^[\s\S]+?startupscript: /mg, '');
           contents = contents.replace(/</g, '&lt;');
           contents = contents.replace(//g, '');
           var code = elem.find('code');
           code.html(code.html() + getDeansiHtml(contents));
+
+    console.log('more');
+    console.log(contents);
+
           setTimeout(getMoreLog, 5000);
         } else {
           displayLog(data);
@@ -254,7 +262,11 @@ Deansi = {
 };
 
 function getDeansiHtml(string) {
+  console.log('IN DEANSI');
+  console.log(string);
   nodes = Deansi.apply(string);
+  console.log('nodes');
+  console.log(nodes);
   var html = '';
   nodes.forEach(function(node) {
     html += '<span class="' + (node.class || '') + '">' + node.text + '</span>';

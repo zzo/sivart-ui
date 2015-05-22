@@ -50,6 +50,11 @@
         <span style="background-color:grey" class="icon icon--cancel"></span>
       </p>
 
+      <p style="display: {{showRunCancel}}" class="jobs-item" title="SSH">
+       <span class="icon icon--env" onClick="window.open('/ssh/{{repoName}}/{{buildId}}/{{buildNumber}}', '_blank', 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=530,width=975'); return false"></span>
+      </p>
+     
+
     </div>
   </a>
 </li>
