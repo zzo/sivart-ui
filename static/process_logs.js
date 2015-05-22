@@ -9,6 +9,44 @@ $(function() {
     var path = [repoName, 'jobs', branch, buildId, buildNumber].join('/');
     $.getJSON('/' + path, displayLog);
   });
+
+  $("#runData").on('click', 'p.redoRun', function(event) {
+    event.stopPropagation();
+    var dataElem = $(this).parent().parent();
+    var repoName = dataElem.attr('data-repoName');
+    var buildId = dataElem.attr('data-buildId');
+    var buildNumber = dataElem.attr('data-buildNumber');
+    var path = ['/redoRun', repoName, buildId, buildNumber].join('/');
+    $.getJSON(path, function(data) {
+      if (data.error) {
+        // Bad Things
+        console.log(data.error);
+      } else {
+        // just reload the page
+        location.reload(true);
+        // should ensure the row icon is now 'cancel'
+      }
+    });
+  });
+
+  $("#runData").on('click', 'p.cancelRun', function() {
+    event.stopPropagation();
+    var dataElem = $(this).parent().parent();
+    var repoName = dataElem.attr('data-repoName');
+    var buildId = dataElem.attr('data-buildId');
+    var buildNumber = dataElem.attr('data-buildNumber');
+    var path = ['/cancelRun', repoName, buildId, buildNumber].join('/');
+    $.getJSON(path, function(data) {
+      if (data.error) {
+        // Bad Things
+        console.log(data.error);
+      } else {
+        // just reload the page
+        location.reload(true);
+        // should ensure the row icon is now 'retry'
+      }
+    });
+  });
 });
 
 function displayLog(data)  {

@@ -41,6 +41,15 @@
         <span class="icon icon--clock-dark"></span>
         {{runTotalTime}}
       </p>
+
+      <p style="display: {{showRunRetry}}" class="redoRun jobs-item" title="Restart Run">
+        <span style="background-color:grey" class="icon icon--trigger"></span>
+      </p>
+
+      <p style="display: {{showRunCancel}}" class="cancelRun jobs-item" title="Cancel Run">
+        <span style="background-color:grey" class="icon icon--cancel"></span>
+      </p>
+
     </div>
   </a>
 </li>

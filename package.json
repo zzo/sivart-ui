@@ -16,7 +16,8 @@
     "install": "^0.1.8",
     "lusca": "^1.1.0",
     "npm": "^2.9.0",
+    "sivart-data": "zzo/sivart-data",
     "sivart-GCE": "zzo/sivart-GCE",
-    "sivart-data": "zzo/sivart-data"
+    "sivart-slave": "zzo/sivart-slave"
   }
 }

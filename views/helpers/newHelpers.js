@@ -45,6 +45,24 @@ exports.runState = function() {
   return state;
 };
 
+exports.showRunRetry = function() {
+  var state = this.state;
+  if (state === 'building' || state === 'running') {
+    return 'none';
+  } else {
+    return 'block';
+  }
+};
+
+exports.showRunCancel = function() {
+  var state = this.state;
+  if (state === 'building' || state === 'running') {
+    return 'block';
+  } else {
+    return 'none';
+  }
+};
+
 exports.crumbDisplay = function() {
   return this.buildId ? 'block' : 'none';
 };
@@ -67,6 +85,22 @@ exports.overallBuildStatus = function() {
     state = 'started';
   }
   return state;
+};
+
+exports.showRetry = function() {
+  var state = this.buildData.state;
+  if (state === 'building' || state === 'running') {
+    return 'none';
+  }
+  return 'block';
+};
+
+exports.showCancel = function() {
+  var state = this.buildData.state;
+  if (state === 'building' || state === 'running') {
+    return 'block';
+  }
+  return 'none';
 };
 
 exports.title = function() {

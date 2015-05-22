@@ -12,7 +12,9 @@ var express = require('express'),
   port = process.argv[2] || 8000,
   helpers = require('./views/helpers/newHelpers'), // be fancier about this
   Instance = require('sivart-GCE/Instance'), // for tailing live VM output
-  Auth = require('sivart-GCE/Auth') // for tailing live VM output
+  Auth = require('sivart-GCE/Auth'), // for tailing live VM output
+  Redo = require('sivart-slave/RedoBuild'),
+  Cancel = require('sivart-slave/CancelBuild')
 ;
 
 app.engine('handlebars', exphbs({
@@ -139,6 +141,13 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
       res.json({ mainLog: 'build ' + buildId + ' not found', repoName: repoName });
     } else {
       buildInfo.runs.forEach(function(run) {
+        var script= '';
+        run.script.slice(0).forEach(function(ch) {
+          script += String.fromCharCode(ch);
+        });
+        //console.log(script);
+        //console.log(run.script);
+        //String.fromCharCode
         if (String(run.buildNumber) === buildNumber) {
           if (run.state === 'running' || run.state === 'building') {
             var instance = new Instance(Auth.projectId, Auth.zone, run.instanceName);
@@ -146,6 +155,7 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
               if (err) {
                 res.json({ mainLog: 'Error fetching build log', repoName: repoName });
               } else {
+                fs.writeFileSync('/tmp/sout', output.contents, 'utf8');
                 res.json({
                   mainLog: output.contents,
                   status: 'running',
@@ -157,7 +167,7 @@ app.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, re
               }
             });
           } else {
-            filestore.getMainLogFile(branch, buildId, buildNumber, function(err, data) {
+            filestore.getMainLogFile(buildId, buildNumber, function(err, data) {
               if (!err) {
                 res.json({
                   branch: branch,
@@ -193,12 +203,88 @@ app.get('/getFile/:username/:repo/:branch/:buildId/:buildNumber/:filename', func
   var filename = req.params.filename;
   var filestore = new Filestore(repoName);
 
-  filestore.getLogFile(branch, buildId, buildNumber, filename, function(err, contents) {
+  filestore.getLogFile(buildId, buildNumber, filename, function(err, contents) {
     if (err) {
       console.log('error fetching file');
     }
     res.end(contents);
   });
+});
+
+app.get('/redoBuild/:username/:repo/:buildId', function (req, res) {
+  var username = req.params.username;
+  var repo = req.params.repo;
+  var repoName = path.join(username, repo);
+  var buildId = req.params.buildId;
+  Redo.RedoEntireBuild(repoName, buildId, function(err) {
+    /*
+    if (err) {
+      console.log(err);
+      res.send({ error: err });
+    } else {
+      res.redirect(path.join('/', repoName, 'jobs', buildId));
+    }
+  */
+  });
+  res.redirect(path.join('/', repoName, 'jobs', buildId));
+});
+
+app.get('/redoRun/:username/:repo/:buildId/:buildNumber', function (req, res) {
+  var username = req.params.username;
+  var repo = req.params.repo;
+  var repoName = path.join(username, repo);
+  var buildId = req.params.buildId;
+  var buildNumber = req.params.buildNumber;
+
+  Redo.RedoOneRun(repoName, buildId, buildNumber, function(err) {
+    /*
+    if (err) {
+      console.log(err);
+      res.json({ error: err });
+    } else {
+      res.json({});
+    }
+    */
+  });
+  res.json({});
+});
+
+app.get('/cancelBuild/:username/:repo/:buildId', function (req, res) {
+  var username = req.params.username;
+  var repo = req.params.repo;
+  var repoName = path.join(username, repo);
+  var buildId = req.params.buildId;
+  Cancel.CancelBuild(repoName, buildId, function(err) {
+    /*
+    if (err) {
+      console.log(err);
+      res.send({ error: err });
+    } else {
+      res.redirect(path.join('/', repoName, 'jobs', buildId));
+    }
+    */
+  });
+  res.redirect(path.join('/', repoName, 'jobs', buildId));
+});
+
+app.get('/cancelRun/:username/:repo/:buildId/:buildNumber', function (req, res) {
+  var username = req.params.username;
+  var repo = req.params.repo;
+  var repoName = path.join(username, repo);
+  var buildId = req.params.buildId;
+  var buildNumber = req.params.buildNumber;
+
+  Cancel.CancelRun(repoName, buildId, buildNumber, function(err) {
+    /*
+    if (err) {
+      console.log(err);
+      res.json({ error: err });
+    } else {
+      res.json({});
+    }
+    */
+  });
+  res.json({});
 });
 
 app.use(function(req, res, next){

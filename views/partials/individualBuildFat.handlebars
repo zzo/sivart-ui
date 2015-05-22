@@ -37,6 +37,25 @@
           <span class="icon icon--cal"></span>{{timeStartedAgo}} ago
         </li>
       </ul>
+      <div style="display: {{showCancel}}">
+        <div id="actions" class="repo-main-tools">
+          <div>
+            <a href="/cancelBuild/{{buildData.repoName}}/{{buildData.id}}" class="button-cancel" title="Cancel Run">
+            <span class="icon icon--trigger"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: {{showRetry}}">
+        <div id="actions" class="repo-main-tools">
+          <div>
+            <a href="/redoBuild/{{buildData.repoName}}/{{buildData.id}}" class="button-circle" title="Restart Run">
+            <span class="icon icon--trigger"></span>
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
