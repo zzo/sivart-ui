@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>ssh</title>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/socket.io-stream.js"></script>
+		<script src="/terminal.js"></script>
+		<style>
+      .terminaljs {
+	      background: black;
+	      color: lightgreen;
+	      font-family: Courier, monospace;
+	      display:inline-block;
+      }
+		</style>
+	</head>
+	<body>
+  <h4>
+    You are looking at {{repoName}} {{buildId}}.{{buildNumber}} - if the build is finished please 'nodejs /usr/local/sivart-slave/deleteInstance.js' to delete VM.
+  </h4>
+		<pre 
+      id="ssh"
+      class="terminaljs"
+      data-buildId="{{buildId}}"
+      data-buildNumber="{{buildNumber}}"
+      data-repoName="{{repoName}}"
+      data-columns="100"
+      data-rows="28" />
+
+		<script>
+      var container = document.getElementById('ssh');
+	    container.tabindex = 0; // make it focussable
+
+      // fire up socket.io
+	    var socket = io(location.origin + '/pty');
+
+	    // use data-* attributes to configure terminal (columns/rows)
+      var term = new Terminal(container.dataset);
+
+      // Create bidirectional stream
+	    var stream = ss.createStream({decodeStrings: false, encoding: 'utf-8'});
+
+      // Send stream and options to the server
+      ss(socket).emit('new', stream, container.dataset);
+
+      // Connect everything up
+      stream.pipe(term).dom(container).pipe(stream);
+
+      // ready to rumble
+      container.focus();
+		</script>
+	</body>
+</html>
