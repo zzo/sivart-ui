@@ -50,6 +50,10 @@
 
       // ready to rumble
       container.focus();
+
+      socket.on('ssherror', function (data) {
+        term.write(data.message);
+      });
 		</script>
 	</body>
 </html>

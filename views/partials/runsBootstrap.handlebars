@@ -1,0 +1,61 @@
+<div>
+  <section>
+    <h2 class="build-title">Build Jobs</h2>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>State</th>
+          <th>Build</th>
+          <th>Node</th>
+          <th>Matrix</th>
+          <th>Restart</th>
+          <th>Cancel</th>
+          <th>SSH</th>
+          <th>Time</th>
+        </tr>
+      </thread>
+      <tbody>
+        {{#each noFail}}
+          {{>runRowBootstrap}}
+        {{/each}}
+      </tbody
+    </table>
+
+  </section>
+</div>
+
+{{#if yesFail}}
+<div>
+  <section>
+    <h2 class="build-title">Allowed Failures
+      <span class="icon icon--question"></span>
+      <div class="tooltip">
+        <p class="tooltip-inner">These are jobs you can allow to fail without failing your entire build</p>
+      </div>
+    </h2>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>State</th>
+          <th>Build</th>
+          <th>Node</th>
+          <th>Matrix</th>
+          <th>Restart</th>
+          <th>Cancel</th>
+          <th>SSH</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each yesFail}}
+          {{>runRowBootstrap}}
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+</div>
+{{/if}}
+
+

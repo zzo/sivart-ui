@@ -1,0 +1,54 @@
+{{#if errors}}
+<tr class="danger>
+  <td><span class="glyphicon glyphicon-remove"></span></td>
+  <td colspan="7">
+    <p>
+      {{#each errors}}
+        {{this.message}}
+      {{/each}}
+    </p>
+  </td>
+</tr>
+{{else}}
+<tr class="{{runStateBootstrap}} runRowItem" data-repoName="{{repoName}}" data-branch="{{branch}}" data-buildId="{{buildId}}" data-buildNumber="{{buildNumber}}">
+
+  <td>
+    <span class="glyphicon glyphicon-{{runStateIconBootstrap}}"></span>
+  </td>
+
+  <td>
+    {{buildId}}.{{buildNumber}}
+  </td>
+
+  <td>
+    {{nodeVersion}}
+  </td>
+
+  <td>
+    <span class="redoRun glyphicon glyphicon-tags"></span>
+    &nbsp;{{matrix}}
+  </td>
+
+  {{#ifrunning state}}
+    <td></td>
+    <td align="center">
+      <span class="cancelRun glyphicon glyphicon-remove-sign"></span>
+    </td>
+    <td align="center">
+    <span class="sshRun glyphicon glyphicon-console" onClick="window.open('/ssh/{{repoName}}/{{buildId}}/{{buildNumber}}', '_blank', 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=530,width=975'); return false"></span>
+     </td>
+  {{else}}
+    <td align="center">
+      <span class="redoRun glyphicon glyphicon-retweet"></span>
+    </td>
+    <td></td>
+    <td></td>
+  {{/ifrunning}}
+  </td>
+
+  <td>
+    <span class="redoRun glyphicon glyphicon-time"></span>
+    {{runTotalTime}}
+  </td>
+</tr>
+{{/if}}

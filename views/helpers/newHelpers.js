@@ -30,6 +30,36 @@ exports.getBody = function() {
   }
 };
 
+exports.runStateIconBootstrap = function() {
+  var state = this.state;
+  if (state === 'building' || state === 'running') {
+    return 'option-horizontal';
+  }
+  if (state === 'errored' || state === 'timedout' || state === 'exited') {
+    return 'exclamation-sign';
+  }
+  if (state === 'failed') {
+    return 'remove';
+  }
+
+  return 'ok';
+};
+
+exports.runStateBootstrap = function() {
+  var state = this.state;
+  if (state === 'building' || state === 'running') {
+    return 'active';
+  }
+  if (state === 'errored' || state === 'timedout' || state === 'exited') {
+    return 'warning';
+  }
+  if (state === 'failed') {
+    return 'danger';
+  }
+
+  return 'success';
+};
+
 exports.runState = function() {
   var state = this.state;
   if (state === 'building' || state === 'running') {
@@ -51,6 +81,14 @@ exports.showRunRetry = function() {
     return 'none';
   } else {
     return 'block';
+  }
+};
+
+exports.ifrunning = function(state, options) {
+  if (state === 'building' || state === 'running') {
+    return options.fn(this)
+  } else {
+    return options.inverse(this)
   }
 };
 

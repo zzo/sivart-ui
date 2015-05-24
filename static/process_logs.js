@@ -1,7 +1,7 @@
 var runsList;
 
 $(function() {
-  $("#runData").on('click', 'a.runRowItem', function() {
+  $("#runData").on('click', 'tr.runRowItem', function() {
     var repoName = $(this).attr('data-repoName');
     var branch = $(this).attr('data-branch');
     var buildId = $(this).attr('data-buildId');
@@ -10,7 +10,7 @@ $(function() {
     $.getJSON('/' + path, displayLog);
   });
 
-  $("#runData").on('click', 'p.redoRun', function(event) {
+  $("#runData").on('click', 'span.redoRun', function(event) {
     event.stopPropagation();
     var dataElem = $(this).parent().parent();
     var repoName = dataElem.attr('data-repoName');
@@ -29,7 +29,7 @@ $(function() {
     });
   });
 
-  $("#runData").on('click', 'p.cancelRun', function() {
+  $("#runData").on('click', 'span.cancelRun', function() {
     event.stopPropagation();
     var dataElem = $(this).parent().parent();
     var repoName = dataElem.attr('data-repoName');
@@ -103,8 +103,6 @@ function displayLog(data)  {
 //    log = log.replace(/^[\s\S]+?startupscript: /mg, '');
     log = log.replace(/</g, '&lt;');
     log = log.replace(//g, '');
-    console.log('about to set');
-    console.log(log);
     var html = '<pre class="ansi commandOutput"><code>' + getDeansiHtml(log) + '</code></pre>';
     elem.html(html);
 
@@ -121,10 +119,6 @@ function displayLog(data)  {
           contents = contents.replace(//g, '');
           var code = elem.find('code');
           code.html(code.html() + getDeansiHtml(contents));
-
-    console.log('more');
-    console.log(contents);
-
           setTimeout(getMoreLog, 5000);
         } else {
           displayLog(data);
@@ -262,11 +256,7 @@ Deansi = {
 };
 
 function getDeansiHtml(string) {
-  console.log('IN DEANSI');
-  console.log(string);
   nodes = Deansi.apply(string);
-  console.log('nodes');
-  console.log(nodes);
   var html = '';
   nodes.forEach(function(node) {
     html += '<span class="' + (node.class || '') + '">' + node.text + '</span>';
