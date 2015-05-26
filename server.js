@@ -6,7 +6,7 @@ var express = require('express'),
   lusca = require('lusca'),
   exphbs  = require('express-handlebars'),
   port = process.argv[2] || 8000,
-  helpers = require('./views/helpers/newHelpers'), // be fancier about this
+  helpers = require('./views/helpers/newHelpers') // be fancier about this
 ;
 
 app.engine('handlebars', exphbs({
@@ -56,13 +56,13 @@ app.use(function(err, req, res, next){
 
   // respond with html page
   if (req.accepts('html')) {
-    res.render('404', { url: req.url });
+    res.render('404', { url: req.url, error: err });
     return;
   }
 
   // respond with json
   if (req.accepts('json')) {
-    res.send({ error: 'Not found' });
+    res.send({ error: err });
     return;
   }
 

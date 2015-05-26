@@ -34,13 +34,17 @@ router.get('/:username/:repo/jobs/:buildId', function (req, res, next) {
         return !run.ignoreFailure;
       });
 
-      res.render('individualBuildFat', { build: build, repoName: repoName, buildId: buildId });
+      res.render('individualBuildFat', {
+        build: build,
+        repoName: repoName,
+        buildId: buildId
+      });
     }
   });
 });
 
 router.use(function(error, req, res, next) {
-  next(err);
+  next(error);
 });
 
 module.exports = router;
