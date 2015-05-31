@@ -45,10 +45,12 @@ var buildLists = require('./routes/BuildList');
 var buildSingle = require('./routes/BuildSingle');
 var runSingle = require('./routes/RunSingle');
 var redoOrCancel = require('./routes/RedoOrCancel');
+var getFile = require('./routes/GetFile');
 app.use('/', buildLists);
 app.use('/', buildSingle);
 app.use('/', runSingle);
 app.use('/', redoOrCancel);
+app.use('/', getFile);
 
 // generic error handling
 app.use(function(err, req, res, next){

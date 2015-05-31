@@ -4,7 +4,7 @@ var path = require('path');
 var Redo = require('sivart-slave/RedoBuild');
 var Cancel = require('sivart-slave/CancelBuild');
 
-router.get(/\/(redo|cancel)Build\/(\w+)\/(\w+)\/(\d+)/, function (req, res) {
+router.get(/(redo|cancel)Build\/([^/]+)\/([^/]+)\/(\d+)/, function (req, res) {
   var which = req.params[0];
   var username = req.params[1];
   var repo = req.params[2];
@@ -19,7 +19,7 @@ router.get(/\/(redo|cancel)Build\/(\w+)\/(\w+)\/(\d+)/, function (req, res) {
   }, 5000);
 });
 
-router.get(/\/(redo|cancel)Build\/(\w+)\/(\w+)\/(\d+)\/(\d+)/, function (req, res) {
+router.get(/(redo|cancel)Run\/([^/]+)\/([^/]+)\/(\d+)\/(\d+)/, function (req, res) {
   var which = req.params[0];
   var username = req.params[1];
   var repo = req.params[2];
@@ -29,6 +29,9 @@ router.get(/\/(redo|cancel)Build\/(\w+)\/(\w+)\/(\d+)\/(\d+)/, function (req, re
   var func = which === 'redo' ? Redo.RedoOneRun : Cancel.CancelRun;
   func(repoName, buildId, buildNumber, function(err) {
     // do something w/error
+    if (err) {
+      console.error(err);
+    }
   });
 
   setTimeout(function() {

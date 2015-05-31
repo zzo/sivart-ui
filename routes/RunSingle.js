@@ -61,7 +61,7 @@ router.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req,
 });
 
 router.use(function(error, req, res, next) {
-  next(err);
+  next(error);
 });
 
 module.exports = router;

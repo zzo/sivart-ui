@@ -40,6 +40,9 @@ exports.runStateIconBootstrap = function() {
   if (state === 'failed') {
     return 'remove';
   }
+  if (state === 'canceled') {
+    return 'remove-sign';
+  }
 
   return 'ok';
 };
@@ -49,7 +52,7 @@ exports.runStateBootstrap = function() {
   if (state === 'building' || state === 'running') {
     return 'active';
   }
-  if (state === 'errored' || state === 'timedout' || state === 'exited') {
+  if (state === 'errored' || state === 'timedout' || state === 'exited' || state === 'canceled') {
     return 'warning';
   }
   if (state === 'failed') {

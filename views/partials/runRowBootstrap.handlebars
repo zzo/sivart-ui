@@ -1,10 +1,10 @@
 {{#if errors}}
-<tr class="danger runRowItem">
+<tr class="danger runRowItem" data-repoName="{{repoName}}" data-branch="{{branch}}" data-buildId="{{buildId}}" data-buildNumber="{{buildNumber}}">
   <td><span class="glyphicon glyphicon-exclamation-sign"></span></td>
   <td> - </td>
   <td> - </td>
 
-  <td colspan="5">
+  <td colspan="3">
     <p>
       {{#each errors}}
         {{this.message}}
@@ -12,12 +12,19 @@
     </p>
   </td>
 
+  <td align="center">
+    <span class="redoRun glyphicon glyphicon-retweet"></span>
+  </td>
+  <td></td>
+  <td></td>
+
+  <td> - </td>
 </tr>
 {{else}}
 <tr class="{{runStateBootstrap}} runRowItem" data-repoName="{{repoName}}" data-branch="{{branch}}" data-buildId="{{buildId}}" data-buildNumber="{{buildNumber}}">
 
   <td>
-    <span class="glyphicon glyphicon-{{runStateIconBootstrap}}"></span>
+    <span data-toggle="tooltip" title="{{state}}" class="glyphicon glyphicon-{{runStateIconBootstrap}}"></span>
   </td>
 
   <td>
@@ -36,14 +43,14 @@
   {{#ifrunning state}}
     <td></td>
     <td align="center">
-      <span class="cancelRun glyphicon glyphicon-remove-sign"></span>
+      <span data-toggle="tooltip" title="cancel" class="cancelRun glyphicon glyphicon-remove-sign"></span>
     </td>
     <td align="center">
-    <span class="sshRun glyphicon glyphicon-console" onClick="window.open('/ssh/{{repoName}}/{{buildId}}/{{buildNumber}}', '_blank', 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=530,width=975'); return false"></span>
+    <span data-toggle="tooltip" title="SSH to host" class="sshRun glyphicon glyphicon-console" onClick="window.open('/ssh/{{repoName}}/{{buildId}}/{{buildNumber}}', '_blank', 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=530,width=975'); return false"></span>
      </td>
   {{else}}
     <td align="center">
-      <span class="redoRun glyphicon glyphicon-retweet"></span>
+      <span data-toggle="tooltip" title="restart" class="redoRun glyphicon glyphicon-retweet"></span>
     </td>
     <td></td>
     <td></td>

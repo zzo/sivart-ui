@@ -35,7 +35,7 @@ module.exports = function(server, app) {
       var datastore = new Datastore(repoName);
       filestore.getPrivateKey(buildId, buildNumber, function(err, privateKey) {
         if (err) {
-          socket.emit('ssherror', { error: err, message: err.errors[0].message });
+          socket.emit('ssherror', { error: err, message: err.toString() + ' maybe host not ready yet...' });
         } else {
           // need to write out private key somewhere for ssh like it likes it
           var privateKeyFile = '/tmp/' + name + '.private';
