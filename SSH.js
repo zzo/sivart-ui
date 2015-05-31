@@ -61,6 +61,10 @@ module.exports = function(server, app) {
               // save it off
               ptys[name] = pty;
 
+              pty.on('exit', function(code, signal) {
+                socket.disconnect();
+              });
+
               socket.on('disconnect', function() {
                 fs.unlinkSync(privateKeyFile);
                 pty.kill('SIGHUP');

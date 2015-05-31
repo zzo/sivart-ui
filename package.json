@@ -14,6 +14,7 @@
     "express": "^4.12.3",
     "express-handlebars": "^2.0.1",
     "express-session": "^1.11.1",
+    "forever": "^0.14.1",
     "install": "^0.1.8",
     "lusca": "^1.1.0",
     "npm": "^2.9.0",
@@ -24,5 +25,8 @@
     "socket.io-stream": "^0.8.0",
     "terminal.js": "^1.0.5",
     "uuid": "^2.0.1"
+  },
+  "scripts": {
+    "start": "node_modules/.bin/forever start server.js"
   }
 }

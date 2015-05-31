@@ -26,7 +26,15 @@ router.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req,
             var glf = new GetLiveFile(repoName, buildId, buildNumber, '/tmp/user-script.log');
             glf.fetch(function(err, contents) {
               if (err) {
-                return next(err);
+//                return next(err);
+                res.json({
+                  mainLog: 'cannot get log file right now: ' + err,
+                  status: 'running',
+                  branch: branch,
+                  buildId: buildId,
+                  buildNumber: buildNumber,
+                  repoName: repoName
+                });
               } else {
                 res.json({
                   mainLog: contents,

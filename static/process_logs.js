@@ -11,7 +11,7 @@ $(function() {
   });
 
   $("#runData").on('click', 'span.redoRun', function(event) {
-    event.stopPropagation();
+    event.stopImmediatePropagation();
     var dataElem = $(this).parent().parent();
     var repoName = dataElem.attr('data-repoName');
     var buildId = dataElem.attr('data-buildId');
@@ -30,7 +30,7 @@ $(function() {
   });
 
   $("#runData").on('click', 'span.cancelRun', function() {
-    event.stopPropagation();
+    event.stopImmediatePropagation();
     var dataElem = $(this).parent().parent();
     var repoName = dataElem.attr('data-repoName');
     var buildId = dataElem.attr('data-buildId');

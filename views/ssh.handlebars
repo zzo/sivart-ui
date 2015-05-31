@@ -54,6 +54,17 @@
       socket.on('ssherror', function (data) {
         term.write(data.message);
       });
+
+/*
+      socket.on('exit', function (data) {
+        window.close();
+      });
+      */
+
+      socket.on('disconnect', function (data) {
+        window.close();
+      });
+
 		</script>
 	</body>
 </html>
