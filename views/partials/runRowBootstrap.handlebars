@@ -1,13 +1,17 @@
 {{#if errors}}
-<tr class="danger>
-  <td><span class="glyphicon glyphicon-remove"></span></td>
-  <td colspan="7">
+<tr class="danger runRowItem">
+  <td><span class="glyphicon glyphicon-exclamation-sign"></span></td>
+  <td> - </td>
+  <td> - </td>
+
+  <td colspan="5">
     <p>
       {{#each errors}}
         {{this.message}}
       {{/each}}
     </p>
   </td>
+
 </tr>
 {{else}}
 <tr class="{{runStateBootstrap}} runRowItem" data-repoName="{{repoName}}" data-branch="{{branch}}" data-buildId="{{buildId}}" data-buildNumber="{{buildNumber}}">

@@ -3,7 +3,7 @@
 var path = require('path');
 
 exports.compareURL = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return github.pull_request.html_url;
   } else {
@@ -12,7 +12,7 @@ exports.compareURL = function() {
 };
 
 exports.compareText = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return github.pull_request.title;
   } else {
@@ -21,11 +21,10 @@ exports.compareText = function() {
 };
 
 exports.getBody = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return github.pull_request.body;
   } else {
-// TODO
     return github.head_commit.message;
   }
 };
@@ -118,7 +117,7 @@ exports.active_pull_requests = function() {
 };
 
 exports.overallBuildStatus = function() {
-  var state = this.buildData.state || 'passed';
+  var state = this.build.buildData.state || 'passed';
   if (state === 'building' || state === 'running') {
     state = 'started';
   }
@@ -126,7 +125,7 @@ exports.overallBuildStatus = function() {
 };
 
 exports.showRetry = function() {
-  var state = this.buildData.state;
+  var state = this.build.buildData.state;
   if (state === 'building' || state === 'running') {
     return 'none';
   }
@@ -134,7 +133,7 @@ exports.showRetry = function() {
 };
 
 exports.showCancel = function() {
-  var state = this.buildData.state;
+  var state = this.build.buildData.state;
   if (state === 'building' || state === 'running') {
     return 'block';
   }
@@ -142,17 +141,17 @@ exports.showCancel = function() {
 };
 
 exports.title = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return "PR #" + github.number;
   } else {
-    return this.buildData.branch;
+    return this.build.buildData.branch;
   }
 
 };
 
 exports.comment = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return github.pull_request.title;
   } else {
@@ -161,12 +160,12 @@ exports.comment = function() {
 };
 
 exports.authorGravatarURL = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   return github.sender.avatar_url;
 };
 
 exports.authorName = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return github.sender.login;
   } else {
@@ -180,7 +179,7 @@ exports.runningOrRan = function() {
 };
 
 exports.githubCommitURL = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
     return path.join(github.repository.html_url, 'commit', github.pull_request.merge_commit_sha);
   } else {
@@ -189,7 +188,7 @@ exports.githubCommitURL = function() {
 };
 
 exports.githubCommitNumber = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   if (github.number) {
     //TODO!
       return github.pull_request.merge_commit_sha.substring(0, 7);
@@ -207,15 +206,15 @@ exports.totalSeconds = function() {
 };
 
 exports.detailViewURL = function() {
-  var github = this.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
+  var github = this.build.rawBuildRequest;// || this.buildInfo.rawBuildRequest;
   var repoName = github.repository.full_name;
-  return path.join('/', repoName, 'jobs', String(this.buildData.id));
+  return path.join('/', repoName, 'jobs', String(this.buildId));
 };
 
 exports.totalRunningTime = function() {
-  var total = this.buildData.totalRunTime;
+  var total = this.build.buildData.totalRunTime;
   if (!total) {
-    total = new Date().getTime() - this.buildData.created;
+    total = new Date().getTime() - this.build.buildData.created;
   }
   return convert(total / 1000);
 };
@@ -226,7 +225,7 @@ exports.timeStarted = function() {
 
 exports.timeStartedAgo = function() {
   var now = new Date().getTime();
-  var diff = now - this.buildData.created;
+  var diff = now - this.build.buildData.created;
   return convert(diff / 1000);
 };
 

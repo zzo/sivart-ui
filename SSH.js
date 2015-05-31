@@ -1,14 +1,16 @@
 'use strict';
 
+var path = require('path');
+
 module.exports = function(server, app) {
   var fs = require('fs');
   var io = require('socket.io').listen(server);
   var ss = require('socket.io-stream');
   var uuid = require('uuid');
+  var Filestore = require('sivart-data/Filestore');
   var Datastore = require('sivart-data/Datastore');
   var child_pty = require('child_pty');
   var ptys = {};
-  var Instance = require('sivart-GCE/Instance'); // getting the IP address
 
   // for ssh stuff
   io.of('pty').on('connection', function(socket) {
@@ -29,19 +31,19 @@ module.exports = function(server, app) {
       // Need to get IP address of this instance and its private key
       // First get the private key as that method conveniently also returns the 'run' object
       //  that has the the instance name which we need to get its IP address..
+      var filestore = new Filestore(repoName);
       var datastore = new Datastore(repoName);
-      datastore.getPrivateKey(buildId, buildNumber, function(err, privateKey, run) {
+      filestore.getPrivateKey(buildId, buildNumber, function(err, privateKey) {
         if (err) {
           socket.emit('ssherror', { error: err, message: err.errors[0].message });
         } else {
           // need to write out private key somewhere for ssh like it likes it
           var privateKeyFile = '/tmp/' + name + '.private';
-          fs.writeFileSync(privateKeyFile, privateKey, { mode: 384 }); // 0600 in octal
+          fs.writeFileSync(privateKeyFile, privateKey.toString(), { mode: 384 }); // 0600 in octal
           // Now get IP address
-          var instance = Instance.Factory('slave', run.instanceName);
-          instance.getIP(function(err, ip) {
-            if (err) {
-              socket.emit('ssherror', { error: err, message: err.errors[0].message });
+          datastore.getRun(buildId, buildNumber, function(grerr, run) {
+            if (grerr) {
+              socket.emit('ssherror', { error: grerr, message: grerr.errors[0].message });
             } else {
               // Ready to spawn off ssh command on pty!
               var pty = child_pty.spawn('ssh',
@@ -50,7 +52,7 @@ module.exports = function(server, app) {
                   '-o', 'UserKnownHostsFile=/dev/null',
                   '-o', 'CheckHostIP=no',
                   '-o', 'StrictHostKeyChecking=no',
-                  'sivart@' + ip
+                  'sivart@' + run.ip
                 ], options);
 
               // wire it up
@@ -106,5 +108,4 @@ module.exports = function(server, app) {
       buildNumber: buildNumber
     });
   });
-
 };

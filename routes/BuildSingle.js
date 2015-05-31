@@ -22,6 +22,7 @@ router.get('/:username/:repo/jobs/:buildId', function (req, res, next) {
   var repoName = path.join(username, repo);
   var buildId = req.params.buildId;
   var datastore = new Datastore(repoName);
+
   datastore.getABuild(buildId, function(err, build) {
     if (err) {
       return next(404);
@@ -44,7 +45,7 @@ router.get('/:username/:repo/jobs/:buildId', function (req, res, next) {
 });
 
 router.use(function(error, req, res, next) {
-  next(error);
+  res.render('404', { url: req.url, error: error });
 });
 
 module.exports = router;

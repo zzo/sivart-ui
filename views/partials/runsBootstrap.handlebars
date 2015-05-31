@@ -16,7 +16,7 @@
         </tr>
       </thread>
       <tbody>
-        {{#each noFail}}
+        {{#each build.noFail}}
           {{>runRowBootstrap}}
         {{/each}}
       </tbody
@@ -49,7 +49,7 @@
         </tr>
       </thead>
       <tbody>
-        {{#each yesFail}}
+        {{#each build.yesFail}}
           {{>runRowBootstrap}}
         {{/each}}
       </tbody>
