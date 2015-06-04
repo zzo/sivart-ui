@@ -127,6 +127,17 @@ exports.overallBuildStatus = function() {
   return state;
 };
 
+exports.bootstrapHeaderColor = function() {
+  var status = exports.overallBuildStatus.call(this);
+  if (status === 'passed') {
+    return 'lightgreen';
+  }
+  if (status === 'started') {
+    return 'lightgrey';
+  }
+  return 'tomato';
+};
+
 exports.showRetry = function() {
   var state = this.build.buildData.state;
   if (state === 'building' || state === 'running') {

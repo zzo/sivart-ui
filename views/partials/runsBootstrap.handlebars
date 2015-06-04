@@ -14,12 +14,12 @@
           <th>SSH</th>
           <th>Time</th>
         </tr>
-      </thread>
+      </thead>
       <tbody>
         {{#each build.noFail}}
           {{>runRowBootstrap}}
         {{/each}}
-      </tbody
+      </tbody>
     </table>
 
   </section>
@@ -28,12 +28,9 @@
 {{#if build.yesFail}}
 <div>
   <section>
-    <h2 class="build-title">Allowed Failures
-      <span class="icon icon--question"></span>
-      <div class="tooltip">
-        <p class="tooltip-inner">These are jobs you can allow to fail without failing your entire build</p>
-      </div>
-    </h2>
+    <h4 class="build-title">Allowed Failures
+      <span data-toogle="tooltip" title="These are jobs you can allow to fail without failing your entire build"  class="glyphicon glyphicon-question-sign"></span>
+    </h4>
 
     <table class="table table-hover">
       <thead>
@@ -57,5 +54,3 @@
   </section>
 </div>
 {{/if}}
-
-
