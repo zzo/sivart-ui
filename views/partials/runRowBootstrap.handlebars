@@ -36,17 +36,17 @@
   </td>
 
   <td>
-    <span class="redoRun glyphicon glyphicon-tags"></span>
+    <span class="redoRun octicon octicon-versions"></span>
     &nbsp;{{matrix}}
   </td>
 
   {{#ifrunning state}}
     <td></td>
     <td align="center">
-      <span data-toggle="tooltip" title="cancel" class="cancelRun glyphicon glyphicon-remove-sign"></span>
+      <span data-toggle="tooltip" title="cancel" class="cancelRun mega-octicon octicon-x"></span>
     </td>
     <td align="center">
-    <span data-toggle="tooltip" title="SSH to host" class="sshRun glyphicon glyphicon-console" onClick="window.open('/ssh/{{repoName}}/{{buildId}}/{{buildNumber}}', '_blank', 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=530,width=975'); return false"></span>
+    <span data-toggle="tooltip" title="SSH to host" class="sshRun mega-octicon octicon-terminal" onClick="window.open('/ssh/{{repoName}}/{{buildId}}/{{buildNumber}}', '_blank', 'menubar=no,location=no,resizable=no,scrollbars=no,status=no,height=530,width=975'); return false"></span>
      </td>
   {{else}}
     <td align="center">

@@ -252,7 +252,7 @@ exports.totalRunningTime = function() {
   }
 
   if (!total) {
-    total = new Date().getTime() - this.buildData.cureated || this.build.buildData.created;
+    total = new Date().getTime() - this.buildData.created || this.build.buildData.created;
   }
   return convert(total / 1000);
 };

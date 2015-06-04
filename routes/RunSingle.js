@@ -4,6 +4,7 @@ var path = require('path');
 var Datastore = require('sivart-data/Datastore');
 var Filestore = require('sivart-data/Filestore');
 var GetLiveFile = require('sivart-slave/GetLiveFile');
+var http = require('http');
 
 // view a single build run
 router.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req, res, next) {
@@ -36,6 +37,7 @@ router.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req,
                   repoName: repoName
                 });
               } else {
+                console.log('sending...');
                 res.json({
                   mainLog: contents,
                   status: 'running',
@@ -47,19 +49,27 @@ router.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req,
               }
             });
           } else {
-            filestore.getMainLogFile(buildId, buildNumber, function(err, data) {
-              if (!err) {
+            // Just get the cleaned user script output directly from google - way faster
+            var publicBase = filestore.getBasePublicURL(branch, buildId, buildNumber); 
+            var URL = 'http://storage.googleapis.com/' + publicBase +  '/user-script.clean.log'
+            http.get(URL, function(fileResult) {
+              var data = '';
+              fileResult.on('data', function(chunk) {
+                data += chunk.toString();
+              });
+              fileResult.on('end', function() {
                 res.json({
                   branch: branch,
                   buildId: buildId,
                   buildNumber: buildNumber,
-                  mainLog: data.toString(),
+                  mainLog: data,
                   repoName: repoName,
-                  baseURL: filestore.getBasePublicURL(branch, buildId, buildNumber)
+                  baseURL: publicBase
                 });
-              } else {
-                return next(err);
-              }
+              });
+            }).on('error', function(e) {
+              console.log("Got error: " + e.message);
+              return next(err);
             });
           }
         }

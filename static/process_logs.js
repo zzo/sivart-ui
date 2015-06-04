@@ -69,7 +69,7 @@ function displayLog(data)  {
   if (data.status != 'running') {
     log = log.replace(/^-+ START ([^-]+) -+$/mg, '<h3>$1</h3><div>');
     log = log.replace(/^-+ END ([^-]+) -+$/mg, '</div>');
-    log = log.replace(/<h3>Save Logs<\/h3>.+$/, '');
+    log = log.replace(/<h3>Save Logs<\/h3>.+$/, ''); // last one blow it out
   
     var test = /--COMMAND START: (.+): \/tmp\/sivart\/logs\/([^:]+): (.+)\s+--COMMAND (\w+): (.+): (?:(\d+): )?(\d+) seconds\n?/;
     while (log.match(test)) {
@@ -79,11 +79,7 @@ function displayLog(data)  {
     elem.html(log);
 
     // open last last file & scroll to it to see error immediately if there was a failure
-    var failed = $('li.failed');
-    var errored = $('li.errored');
-    if (!failed.length && errored.length) {
-      failed = errored;
-    }
+    var failed = $('div[data-status=failed],div[data-status=errored],div[data-status=timedout],div[data-status=exited],div[data-status=system]');
     if (failed.length) {
       failed.trigger('click');
       $(document).ajaxComplete(function(event, xhr, settings)  {
@@ -98,9 +94,6 @@ function displayLog(data)  {
   } else {
     // live log info just dump the data
     var seen_length = log.length;
-// need theses lines if pulling in serial console log 
-//    log = log.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
-//    log = log.replace(/^[\s\S]+?startupscript: /mg, '');
     log = log.replace(/</g, '&lt;');
     log = log.replace(//g, '');
     var html = '<pre class="ansi commandOutput"><code>' + getDeansiHtml(log) + '</code></pre>';
@@ -112,9 +105,6 @@ function displayLog(data)  {
         if (data.status === 'running') {
           contents = data.mainLog.slice(seen_length);
           seen_length += contents.length;
-// need theses lines if pulling in serial console log 
- //         contents = contents.split('\n').filter(function (s) { return s.match('startupscript:')}).join('\n');
-//          contents = contents.replace(/^[\s\S]+?startupscript: /mg, '');
           contents = contents.replace(/</g, '&lt;');
           contents = contents.replace(//g, '');
           var code = elem.find('code');
@@ -131,35 +121,46 @@ function displayLog(data)  {
   function fullCommand(match, command ,logfile, startTime, commandStatus, commandAgain, exitCode, seconds) {
     // here are all of the possible done run states (besides 'running' and 'building')
     var statusMap = {
-      'passed': 'passed',
-      'failed': 'failed',
-      'errored': 'errored',
-      'timedout': 'failed',
-      'exited': 'failed',
-      'system': 'errored',
+      'passed': 'bg-success',
+      'failed': 'bg-danger',
+      'errored': 'bg-danger',
+      'timedout': 'bg-danger',
+      'exited': 'bg-danger',
+      'system': 'bg-danger',
+    };
+    var iconMap = {
+      'passed': 'check',
+      'failed': 'x',
+      'errored': 'alert',
+      'timedout': 'clock',
+      'exited': 'circle-slash',
+      'system': 'server',
     };
 
-    var status = statusMap[commandStatus];
+
     if (!seconds) {
       seconds = exitCode;
     }
 
     var logfileURL = 'https://storage.googleapis.com/' + data.baseURL + '/';
-    var object = data.base
-    return '<li data-logfile="' + logfile + '" '
-      + 'data-buildNumber="' + data.buildNumber + '" '
-      + 'class="notloaded command tile tile--jobs row list-unstyled ' + status + '">'
-      + '<div class="tile-status tile-status--job">'
-      +   '<span class="icon icon--job ' + status  + '"></span>'
+
+    return '<div data-logfile="' + logfile + '" '
+      + 'data-buildNumber="' + data.buildNumber + '" data-status="' + commandStatus + '" '
+      + 'class="notloaded command row ' + statusMap[commandStatus] + '">'
+      + '<div class="col-md-1">'
+      + '<span class="octicon octicon-' + iconMap[commandStatus]  + '"></span>'
       + '</div>'
-      + '<p style="margin-left: 30px" class="job-ib jobs-item build-status">'
+      + '<div class="col-md-8">'
       + command
-      + '</p><p class="job-duration jobs-item">'
-      + '<a href="' + logfileURL + logfile + '" title="Download log file" target="_blank" style="cursor: pointer" class="glyphicon glyphicon-download" aria-hidden="true"></a>'
-      + '</p><p class="job-duration jobs-item">'
-      + seconds
-      + ' seconds</p></li>'
-      + '<pre class="ansi commandOutput" style="display: none"><code></code></pre>';
+      + '</div>'
+      + '<div class="col-md-2">'
+      + seconds + ' seconds'
+      + '</div>'
+      + '<div class="col-md-1">'
+      + '<a href="' + logfileURL + logfile + '" title="Download log file" target="_blank" style="cursor: pointer" class="octicon octicon-cloud-download" aria-hidden="true"></a>'
+      + '</div>'
+      + '</div>'
+      + '<pre class="ansi commandOutput" style="display: none"><code></code></pre>'
   }
 }
 
