@@ -1,9 +1,12 @@
 <div class="jumbotron" style="background-color:{{bootstrapHeaderColor}}; padding:20px;">
 <div class="media">
   <div class="media-left">
-    <a href="#">
-      <img width=64 height=64 class="media-object" src="http://rocketeerbkw.github.io/slides/austin-linux-meetup/git/git-logo.png" alt="">
-    </a>
+    <div>
+      <span data-toggle="tooltip" title="{{buildData.state}}" class="glyphicon glyphicon-{{runStateIconBootstrap}}"></span>
+    </div>
+    <div>
+      <span class="mega-octicon octicon-git-{{octiconBuildType}}"></span>
+    </div>
   </div>
   <div class="media-body">
       <div class="row">
@@ -20,15 +23,15 @@
       <ul style="list-style-type: none;">
         <li>
           <a href="{{detailViewURL}}">
-          <span class="glyphicon glyphicon-paperclip"></span>&nbsp;{{build.buildData.id}} {{overallBuildStatus}}</a>
+          <span class="octicon octicon-code"></span>&nbsp;{{buildId}} {{overallBuildStatus}}</a>
         </li>
         <li>
           <a class="commit" href="{{githubCommitURL}}">
-          <span class="glyphicon glyphicon-send"></span>&nbsp;Commit {{githubCommitNumber}}</a>
+          <span class="octicon octicon-mark-github"></span>&nbsp;Commit {{githubCommitNumber}}</a>
         </li>
         <li>
-          <a class="compare" href="{{compareURL}}">
-          <span class="glyphicon glyphicon-tags"></span>&nbsp;{{compareText}}</a>
+          <a class="compare rightTitle" href="{{compareURL}}">
+          <span class="octicon octicon-mark-github"></span>&nbsp;{{compareText}}</a>
         </li>
         <li>
           <span class="glyphicon glyphicon-time"></span>&nbsp;{{runningOrRan}} for {{totalRunningTime}}

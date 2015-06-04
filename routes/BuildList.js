@@ -32,7 +32,6 @@ router.get('/:username/:repo/:action', function (req, res) {
       res.render('buildList', { type: type, repoName: repoName });
     } else {
       data = data.reverse();
-      console.log(data);
       res.render('buildList', { type: type, builds: data, repoName: repoName });
     }
   });

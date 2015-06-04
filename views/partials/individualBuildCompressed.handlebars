@@ -1,3 +1,51 @@
+<div class="media" style="background-color:{{bootstrapHeaderColor}}; padding:0px; margin:5px;">
+  <div class="media-left">
+    <div>
+      <span data-toggle="tooltip" title="{{buildData.state}}" class="glyphicon glyphicon-{{runStateIconBootstrap}}"></span>
+    </div>
+    <div>
+      <span class="mega-octicon octicon-git-{{octiconBuildType}}"></span>
+    </div>
+  </div>
+  <div class="media-body">
+      <div class="row">
+        <div class="col-md-8">
+          <a href="{{detailViewURL}}">
+            <h4 class="buildTitle media-heading">{{title}}&nbsp;&nbsp;{{comment}}</h4>
+          </a>
+          <div>
+            <img width="32" height="32" src="{{authorGravatarURL}}">{{authorName}} authored and committed
+          </div>
+        </div>
+        <div class="col-md-4">
+      <ul style="list-style-type: none;">
+        <li>
+          <a href="{{detailViewURL}}">
+          <span class="octicon octicon-code"></span>&nbsp;{{buildData.id}} {{overallBuildStatus}}</a>
+        </li>
+        <li>
+          <a class="commit" href="{{githubCommitURL}}">
+          <span class="octicon octicon-mark-github"></span>&nbsp;Commit {{githubCommitNumber}}</a>
+        </li>
+        <li>
+          <a class="compare rightTitle" href="{{compareURL}}">
+          <span class="octicon octicon-mark-github"></span>&nbsp;{{compareText}}</a>
+        </li>
+        <li>
+          <span class="glyphicon glyphicon-time"></span>&nbsp;{{runningOrRan}} for {{totalRunningTime}}
+        </li>
+        <li>
+          <span class="glyphicon glyphicon-calendar"></span>&nbsp;{{timeStartedAgo}} ago
+        </li>
+      </ul>
+        </div>
+      </div>
+  </div>
+  <div>
+  </div>
+</div>
+
+<!--
 <li class="{{overallBuildStatus}} tile tile--small tile--build row" style="margin-bottom: 20px">
   <div class="tile-status">
     <span class="icon icon-status {{overallBuildStatus}}"></span>
@@ -8,7 +56,7 @@
       <small>{{title}}</small>
       <a href="{{detailViewURL}}">{{comment}}</a>
     </h2>
-    <p class="tile-author"><img alt="" src="{{authorGravatarURL}}">{{authorName}} committed</p>
+    <p class="tile-author"><img alt="" width=32 height=32 src="{{authorGravatarURL}}">{{authorName}} committed</p>
   </div>
   <div class="column tile-additional medium-6 end">
     <div class="column small-6">
@@ -37,3 +85,4 @@
     </div>
   </div>
 </li>
+-->
