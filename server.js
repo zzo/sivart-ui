@@ -6,6 +6,8 @@ var express = require('express'),
   lusca = require('lusca'),
   exphbs  = require('express-handlebars'),
   helpers = require('./views/helpers/newHelpers') // be fancier about this
+//  passport = require('passport')
+//  cookieParser = require('cookie-parser')
 ;
 
 var port = process.env.NODE_ENV === 'production' ? 80 : 8000;
@@ -47,6 +49,8 @@ var buildSingle = require('./routes/BuildSingle');
 var runSingle = require('./routes/RunSingle');
 var redoOrCancel = require('./routes/RedoOrCancel');
 var getFile = require('./routes/GetFile');
+var login = require('./routes/Login');
+app.use('/', login);
 app.use('/', buildLists);
 app.use('/', buildSingle);
 app.use('/', runSingle);

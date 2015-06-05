@@ -10,6 +10,7 @@
   "dependencies": {
     "body-parser": "^1.12.3",
     "child_pty": "^1.0.0",
+    "cookie-parser": "^1.3.5",
     "cookie-session": "^1.1.0",
     "express": "^4.12.3",
     "express-handlebars": "^2.0.1",
@@ -18,6 +19,8 @@
     "install": "^0.1.8",
     "lusca": "^1.1.0",
     "npm": "^2.9.0",
+    "passport": "^0.2.2",
+    "passport-github2": "^0.1.9",
     "sivart-GCE": "zzo/sivart-GCE",
     "sivart-data": "zzo/sivart-data",
     "sivart-slave": "zzo/sivart-slave",

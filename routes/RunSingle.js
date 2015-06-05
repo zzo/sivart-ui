@@ -27,15 +27,14 @@ router.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req,
             var glf = new GetLiveFile(repoName, buildId, buildNumber, '/tmp/user-script.log');
             glf.fetch(function(err, contents) {
               if (err) {
-//                return next(err);
-                res.json({
+                res.end(JSON.stringify({
                   mainLog: 'cannot get log file right now: ' + err,
                   status: 'running',
                   branch: branch,
                   buildId: buildId,
                   buildNumber: buildNumber,
                   repoName: repoName
-                });
+                }));
               } else {
                 res.json({
                   mainLog: contents,
@@ -47,6 +46,15 @@ router.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req,
                 });
               }
             });
+          } else if (run.state === 'canceled') {
+                res.json({
+                  mainLog: 'This build has been canceled',
+                  status: 'canceled',
+                  branch: branch,
+                  buildId: buildId,
+                  buildNumber: buildNumber,
+                  repoName: repoName
+                });
           } else {
             // Just get the cleaned user script output directly from google - way faster
             var publicBase = filestore.getBasePublicURL(branch, buildId, buildNumber); 

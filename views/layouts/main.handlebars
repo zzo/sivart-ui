@@ -46,14 +46,37 @@
     </style>
 </head>
 <body>
-<div class="container-fluid">
 
-<h1><b>{{repoName}}</b></h1>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+      <div class="navbar-header">
+      <a class="navbar-brand" href="#"><b>XCI</b></a>
+    </div>
+    <div>
+      <ul class="nav navbar-nav navbar-right">
+        {{#if user}}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{user.username}} <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+             <li><a href="#"><span class="octicon octicon-gear"></span> Settings</a></li>
+             <li class="divider"></li>
+             <li><a href="/logout"><span class="octicon octicon-sign-out"></span> Logout</a></li>
+            </ul>
+         </li>
+        {{else}}
+          <li><a href="/auth/github"><span class="octicon octicon-sign-in"></span> Login</a></li>
+        {{/if}}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
 
 <!--<div style="margin-left: 50px; margin-right: 50px; width: 70%">-->
 <div class="row">
   <div class="col-md-2">
-    <h4>Repos</h4>
+    <h4><span class="mega-octicon octicon-repo"></span> Repos</h4>
     <ul class="list-unstyled">
       <li><a href="/angular/angular.js">angular/angular.js</a></li>
       <li><a href="/angular/angular">angular/angular</a></li>
@@ -62,6 +85,7 @@
     </ul>
   </div>
   <div class="col-md-10">
+<h1><b>{{repoName}} </b><a href="https://github.com/{{repoName}}"><span class="mega-octicon octicon-mark-github"></span></a></h1>
 <div class="row">
 <div class="col-md-2"><h4><a class="btn btn-default {{active_current}} lead" href="/{{repoName}}/">Current</a></h4></div>
 <div class="col-md-2"><h4><a class="btn btn-default {{active_push}} lead" href="/{{repoName}}/push">Branches</a></h4></div>
@@ -75,7 +99,7 @@
 
 </div>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script src="/process_logs.js"></script>
 <script src="/ansiparse.js"></script>
 

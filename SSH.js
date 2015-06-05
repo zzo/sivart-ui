@@ -50,6 +50,7 @@ module.exports = function(server, app) {
           // need to write out private key somewhere for ssh like it likes it
           var privateKeyFile = '/tmp/' + name + '.private';
           fs.writeFileSync(privateKeyFile, privateKey.toString(), { mode: 384 }); // 0600 in octal
+          console.log('write priave key:', privateKeyFile);
           // Now get IP address
           datastore.getRun(buildId, buildNumber, function(grerr, run) {
             if (grerr) {
@@ -64,6 +65,15 @@ module.exports = function(server, app) {
                   '-o', 'StrictHostKeyChecking=no',
                   'sivart@' + run.ip
                 ], options);
+              console.log(
+                [
+                  '-i', privateKeyFile,
+                  '-o', 'UserKnownHostsFile=/dev/null',
+                  '-o', 'CheckHostIP=no',
+                  '-o', 'StrictHostKeyChecking=no',
+                  'sivart@' + run.ip
+                  ]);
+
 
               // wire it up
               pty.stdout.pipe(stream).pipe(pty.stdin);
@@ -76,7 +86,7 @@ module.exports = function(server, app) {
               });
 
               socket.on('disconnect', function() {
-                fs.unlinkSync(privateKeyFile);
+//                fs.unlinkSync(privateKeyFile);
                 pty.kill('SIGHUP');
                 delete ptys[name];
               });
