@@ -1,0 +1,27 @@
+{{message}}
+
+<div>
+Click a repo
+</div>
+
+{{#if user}}
+<div>
+-- OR --
+</div>
+
+
+<div>
+Add your repo to XCI!
+</div>
+<div>
+Set a webhook for your repo to point to http://github.xci.pub/github for both 'push' and 'pull_request' events!!
+</div>
+<div>
+Then push a commit to your repo or create a pull request and come back to http://xci.pub/&lt;username>/&lt;repo name>
+</div>
+<ul>
+{{#each repos}}
+<li>{{this}}</li>
+{{/each}}
+</ul>
+{{/if}}

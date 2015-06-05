@@ -3,11 +3,10 @@
 var express = require('express'),
   app = express(),
   session = require('cookie-session'),
+  github = require('octonode'),
   lusca = require('lusca'),
   exphbs  = require('express-handlebars'),
   helpers = require('./views/helpers/newHelpers') // be fancier about this
-//  passport = require('passport')
-//  cookieParser = require('cookie-parser')
 ;
 
 var port = process.env.NODE_ENV === 'production' ? 80 : 8000;
@@ -50,12 +49,32 @@ var runSingle = require('./routes/RunSingle');
 var redoOrCancel = require('./routes/RedoOrCancel');
 var getFile = require('./routes/GetFile');
 var login = require('./routes/Login');
-app.use('/', login);
+var ghhook = require('./routes/AddGithubHook');
+
+app.use('/', login); //must come first!
+app.use('/', ghhook); //must come second!
 app.use('/', buildLists);
 app.use('/', buildSingle);
 app.use('/', runSingle);
 app.use('/', redoOrCancel);
 app.use('/', getFile);
+
+app.use(function(req, res, next){
+  if (req.user) {
+    var client = github.client(req.user.accessToken);
+    var ghme = client.me();
+    ghme.repos(function(err, data) {
+      if (!err) {
+        var repos = data.map(function(repo) {
+          return repo.full_name;
+        });
+      }
+      res.render('index', { repos: repos });
+    });
+  } else {
+    res.render('index');
+  }
+});
 
 // generic error handling
 app.use(function(err, req, res, next){

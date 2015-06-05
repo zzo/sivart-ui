@@ -27,11 +27,11 @@ passport.use(new GitHubStrategy({
     callbackURL: "http://localhost:8000/auth/github/callback"
   },
   function(accessToken, refreshToken, profile, done) {
+    profile.accessToken = accessToken;
     return done(null, profile);
   }
 ));
 
-//router.use(cookieParser());
 router.use(passport.initialize());
 router.use(passport.session());
 
@@ -50,7 +50,7 @@ router.get('/account', ensureAuthenticated, function(req, res){
 });
 
 router.get('/auth/github',
-  passport.authenticate('github', { scope: [ 'user:email' ] }),
+  passport.authenticate('github', { scope: [ 'user:email', 'write:repo_hook' ] }),
   function(req, res){
     // The request will be redirected to GitHub for authentication, so this
     // function will not be called.
@@ -58,20 +58,17 @@ router.get('/auth/github',
 );
 
 // GET /auth/github/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be called,
-//   which, in this example, will redirect the user to the home page.
 router.get('/auth/github/callback', 
-  passport.authenticate('github', { failureRedirect: '/login' }),
+  passport.authenticate('github', { failureRedirect: '/' }),
   function(req, res) {
-    res.redirect('/');
+    // send em back from whence they came
+    res.redirect(req.get('Referer'));
   }
 );
 
 router.get('/logout', function(req, res){
   req.logout();
-  res.redirect('/');
+  res.redirect(req.get('Referer'));
 });
 
 function ensureAuthenticated(req, res, next) {
