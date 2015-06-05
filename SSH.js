@@ -1,6 +1,7 @@
 'use strict';
 
 var path = require('path');
+var http = require('http');
 
 module.exports = function(server, app) {
   var fs = require('fs');
@@ -17,7 +18,6 @@ module.exports = function(server, app) {
     // receives a bidirectional pipe from the client see index.html
     // for the client-side
     ss(socket).on('error', function(err) {
-      console.log('GOT ERROR: ');
       console.log(err);
     });
     ss(socket).on('new', function(stream, options) {
@@ -27,16 +27,26 @@ module.exports = function(server, app) {
       var buildId = options.buildid;
       var buildNumber = options.buildnumber;
       var repoName = options.reponame;
+      var branch = options.branch;
 
       // Need to get IP address of this instance and its private key
       // First get the private key as that method conveniently also returns the 'run' object
       //  that has the the instance name which we need to get its IP address..
       var filestore = new Filestore(repoName);
       var datastore = new Datastore(repoName);
-      filestore.getPrivateKey(buildId, buildNumber, function(err, privateKey) {
-        if (err) {
+
+      var publicBase = filestore.getBasePublicURL(branch, buildId, buildNumber); 
+      var URL = 'http://storage.googleapis.com/' + publicBase +  '/private.key';
+      http.get(URL, function(fileResult) {
+        var privateKey = '';
+        fileResult.on('data', function(chunk) {
+          privateKey += chunk.toString();
+        });
+        fileResult.on('error', function(chunk) {
           socket.emit('ssherror', { error: err, message: err.toString() + ' maybe host not ready yet...' });
-        } else {
+        });
+
+        fileResult.on('end', function(chunk) {
           // need to write out private key somewhere for ssh like it likes it
           var privateKeyFile = '/tmp/' + name + '.private';
           fs.writeFileSync(privateKeyFile, privateKey.toString(), { mode: 384 }); // 0600 in octal
@@ -72,7 +82,7 @@ module.exports = function(server, app) {
               });
             }
           });
-        }
+        });
       });
     });
   });
@@ -98,16 +108,18 @@ module.exports = function(server, app) {
     }
   });
 
-  app.get('/ssh/:username/:repo/:buildId/:buildNumber', function (req, res) {
+  app.get('/ssh/:username/:repo/:branch/:buildId/:buildNumber', function (req, res) {
     var username = req.params.username;
     var repo = req.params.repo;
     var repoName = path.join(username, repo);
+    var branch = req.params.branch;
     var buildId = req.params.buildId;
     var buildNumber = req.params.buildNumber;
 
     res.render('ssh', {
       layout: false,
       repoName: repoName,
+      branch: branch,
       buildId: buildId,
       buildNumber: buildNumber
     });

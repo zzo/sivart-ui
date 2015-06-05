@@ -26,6 +26,7 @@
       data-buildId="{{buildId}}"
       data-buildNumber="{{buildNumber}}"
       data-repoName="{{repoName}}"
+      data-branch="{{branch}}"
       data-columns="100"
       data-rows="28" />
 
@@ -54,12 +55,6 @@
       socket.on('ssherror', function (data) {
         term.write(data.message);
       });
-
-/*
-      socket.on('exit', function (data) {
-        window.close();
-      });
-      */
 
       socket.on('disconnect', function (data) {
         window.close();

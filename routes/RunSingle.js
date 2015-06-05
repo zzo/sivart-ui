@@ -37,7 +37,6 @@ router.get('/:username/:repo/jobs/:branch/:buildId/:buildNumber', function (req,
                   repoName: repoName
                 });
               } else {
-                console.log('sending...');
                 res.json({
                   mainLog: contents,
                   status: 'running',
