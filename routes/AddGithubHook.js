@@ -4,6 +4,34 @@ var router = express.Router();
 var path = require('path');
 var User = require('sivart-data/User');
 
+router.get('/hasgithubhook/:username/:repo', function(req, res) {
+  if (!req.user) {
+    // Ya gotta login!
+    res.json({error: 'Must be logged in'});
+  } else {
+    var username = req.params.username;
+    var repo = req.params.repo;
+    var repoName = path.join(username, repo);
+  
+    var client = github.client(req.user.accessToken);
+    var ghrepo = client.repo(repoName);
+    var me = 'http://github.xci.pub/github';
+
+    ghrepo.hooks(function(err, data) {
+      if (err) {
+        err = "You do not have permission to list webhooks for this repo - nice try!  Talk to someone who does!!!";
+        res.json({err: err});
+      } else {
+        var found = data.filter(function(hook) {
+          return hook.config.url === me;
+        });
+
+        res.json({ hook: found.length });
+      }
+    });
+  }
+});
+
 router.get('/addgithubhook/:username/:repo', function(req, res) {
   if (!req.user) {
     // Ya gotta login!

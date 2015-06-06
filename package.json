@@ -22,6 +22,7 @@
     "octonode": "^0.6.17",
     "passport": "^0.2.2",
     "passport-github2": "^0.1.9",
+    "q": "^1.4.1",
     "sivart-GCE": "zzo/sivart-GCE",
     "sivart-data": "zzo/sivart-data",
     "sivart-slave": "zzo/sivart-slave",

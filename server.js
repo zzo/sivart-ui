@@ -7,6 +7,7 @@ var express = require('express'),
   lusca = require('lusca'),
   exphbs  = require('express-handlebars'),
   helpers = require('./views/helpers/newHelpers') // be fancier about this
+  var Q = require('q')
 ;
 
 var port = process.env.NODE_ENV === 'production' ? 80 : 8000;

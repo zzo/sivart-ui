@@ -1,10 +1,59 @@
 {{message}}
 
 <div>
-Click a repo
+&lt;-- Click a repo over there
 </div>
 
 {{#if user}}
+<style>
+.onoffswitch {
+    position: relative; width: 90px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "XCI";
+    padding-left: 10px;
+    background-color: #34A7C1; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "NO XCI";
+    padding-right: 10px;
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 18px; margin: 6px;
+    background: #FFFFFF;
+    border: 2px solid #999999; border-radius: 20px;
+    position: absolute; top: 0; bottom: 0; right: 56px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px; 
+}
+</style>
+
 <div>
 -- OR --
 </div>
@@ -13,15 +62,42 @@ Click a repo
 <div>
 Add your repo to XCI!
 </div>
-<div>
-Set a webhook for your repo to point to http://github.xci.pub/github for both 'push' and 'pull_request' events!!
-</div>
-<div>
-Then push a commit to your repo or create a pull request and come back to http://xci.pub/&lt;username>/&lt;repo name>
-</div>
-<ul>
+<dl class="dl-horizontal">
 {{#each repos}}
-<li>{{this}}</li>
+<dt>{{this}}</dt>
+<dd>
+<div class="onoffswitch">
+    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="{{this}}">
+    <label class="onoffswitch-label" for="{{this}}">
+        <span class="onoffswitch-inner"></span>
+        <span class="onoffswitch-switch"></span>
+    </label>
+</div>
+</dd>
 {{/each}}
-</ul>
+</dl>
+<script>
+var repos = $('input[type="checkbox"]');
+repos.each(function() {
+  $(this).parent().spin();
+  var input = $(this);
+  $.getJSON( "/hasgithubhook/" + this.id, function(data) {
+    if (!data.hook) {
+      input.prop('checked', false);
+    } else {
+      input.prop('checked', true);
+    }
+    input.parent().spin(false);
+  });
+});
+repos.on('change', function() {
+  console.log(this.id, 'is now', $(this).prop('checked'));
+  if ($(this).prop('checked')) {
+    // redirect to /addgithubhook/:username/:repo
+    window.location.replace('/addgithubhook/' + this.id);
+  } else {
+    // sorry can't turn it off yet!
+  }
+});
+</script>
 {{/if}}
