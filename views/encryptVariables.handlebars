@@ -1,0 +1,40 @@
+<form id="form">
+  <input type="text" id="encryptMe" autofocus maxlength="256" size="150" placeholder="Enter variable here"></input>
+</form>
+<div id="results" style="display: none">
+Copy and paste this value into your .travis.yml file and call it 'xci_secure' like:
+<pre>
+env:
+  global:
+  - xci_secure: "&lt;crazy long value shown below>"
+</pre>
+<input id="encryptedValue" size="150" type="text" readonly></input>
+<div id="error" style="color:red"></div>
+</div>
+<script>
+var input = $("#encryptMe");
+var form = $("#form");
+
+form.on("submit", function() {
+  var me = $(this);
+  me.spin();
+  $.post( "/encrypt", 
+    { 
+      repoName: '{{repoName}}',
+      encryptMe: input.val(),
+      _csrf: '{{_csrf}}'
+    },
+  function(data) {
+    me.spin(false);
+    $("#results").show();
+    if (data.error) {
+      $("#error").html(data.error);
+    } else {
+      $("#encryptedValue").val(data.encrypted);
+    }
+  }, 'json');
+
+  return false;
+});
+
+</script>
