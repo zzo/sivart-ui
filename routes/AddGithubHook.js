@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var User = require('sivart-data/User');
+var myHook = 'http://github.xci.pub/github';
 
 router.get('/hasgithubhook/:username/:repo', function(req, res) {
   if (!req.user) {
@@ -15,7 +16,6 @@ router.get('/hasgithubhook/:username/:repo', function(req, res) {
   
     var client = github.client(req.user.accessToken);
     var ghrepo = client.repo(repoName);
-    var me = 'http://github.xci.pub/github';
 
     ghrepo.hooks(function(err, data) {
       if (err) {
@@ -23,7 +23,7 @@ router.get('/hasgithubhook/:username/:repo', function(req, res) {
         res.json({err: err});
       } else {
         var found = data.filter(function(hook) {
-          return hook.config.url === me;
+          return hook.config.url === myHook;
         });
 
         res.json({ hook: found.length });
@@ -43,7 +43,6 @@ router.get('/addgithubhook/:username/:repo', function(req, res) {
   
     var client = github.client(req.user.accessToken);
     var ghrepo = client.repo(repoName);
-    var me = 'http://github.xci.pub/github';
     var args = { repoName: repoName };
 
     // maybe already there??
@@ -52,8 +51,9 @@ router.get('/addgithubhook/:username/:repo', function(req, res) {
         args.err = "You do not have permission to list (let alone add!) a webhook to this repo - nice try!  Talk to someone who does!!!";
         res.render("addgithubhook", args);
       } else {
+        console.log(data);
         var found = data.filter(function(hook) {
-          return hook.config.url === me;
+          return hook.config.url === myHook;
         });
         if (!found.length) {
           ghrepo.hook({
@@ -61,14 +61,21 @@ router.get('/addgithubhook/:username/:repo', function(req, res) {
             active: true,
             events: ['push', 'pull_request'],
             config: {
-              url: me,
+              url: myHook,
               content_type: 'json'
             }
           }, function(err, data, headers) {
             if (err) {
               args.err = "You do not have permission to add a hook to the repo " + repoName;
             } 
-            res.render("addgithubhook", args);
+            // Add keys for this repo
+            var createRepoKeys = require('sivart-slave/CreateRepoKeys');
+            createRepoKeys(repoName, function(err) {
+              if (err) {
+                args.err = err;
+              } 
+              res.render("addgithubhook", args);
+            });
           });
         } else {
           res.render("addgithubhook", args);

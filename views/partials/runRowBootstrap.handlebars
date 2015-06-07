@@ -36,8 +36,10 @@
   </td>
 
   <td>
+    {{#if matrix}}
     <span class="redoRun octicon octicon-versions"></span>
     &nbsp;{{matrix}}
+    {{else}}-{{/if}}
   </td>
 
   {{#ifrunning state}}

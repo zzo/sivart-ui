@@ -5,6 +5,7 @@ var express = require('express'),
   session = require('cookie-session'),
   github = require('octonode'),
   lusca = require('lusca'),
+  bodyParser = require('body-parser'),
   exphbs  = require('express-handlebars'),
   helpers = require('./views/helpers/newHelpers') // be fancier about this
   var Q = require('q')
@@ -26,9 +27,17 @@ app.use(session({
     saveUninitialized: true
 }));
 
+// get that _csrf token somehow!
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // https://github.com/krakenjs/lusca
+app.use(function(req,res,next) {
+  next();
+});
+
 app.use(lusca({
-    csrf: true,
+    csrf: false, // TODO(trostler): re-enable this - keeps getting a csrf mismatch currently
     csp: { /* ... */},
     xframe: 'SAMEORIGIN',
     p3p: 'ABCDEF',
@@ -51,9 +60,11 @@ var redoOrCancel = require('./routes/RedoOrCancel');
 var getFile = require('./routes/GetFile');
 var login = require('./routes/Login');
 var ghhook = require('./routes/AddGithubHook');
+var encryptVariable = require('./routes/EncryptVariables');
 
 app.use('/', login); //must come first!
 app.use('/', ghhook); //must come second!
+app.use('/', encryptVariable);
 app.use('/', buildLists);
 app.use('/', buildSingle);
 app.use('/', runSingle);
