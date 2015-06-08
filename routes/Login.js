@@ -50,7 +50,7 @@ router.get('/account', ensureAuthenticated, function(req, res){
 });
 
 router.get('/auth/github',
-  passport.authenticate('github', { scope: [ 'user:email', 'write:repo_hook' ] }),
+  passport.authenticate('github', { scope: [ 'user:email', 'write:repo_hook', 'repo:status', 'read:org', 'repo_deployment' ] }),
   function(req, res){
     // The request will be redirected to GitHub for authentication, so this
     // function will not be called.
